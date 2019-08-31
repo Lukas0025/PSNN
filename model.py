@@ -161,6 +161,6 @@ class model:
 				
 			self.layers = replications[minLoss].layers
 
-	def fit(self, inputs, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
+	def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
 		if type == "evolution":
 			return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc)

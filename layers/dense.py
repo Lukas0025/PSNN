@@ -85,7 +85,7 @@ class dense:
         for i in range(self.neurons):
             out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
-        return out
+        return self.activate.calc(self.activate, out)
 
     
     def __backprop__(self, error):
