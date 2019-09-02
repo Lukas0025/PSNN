@@ -2,37 +2,44 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from PYSNN import model, layers
-
-def myloss(output, targets):
-	return abs(np.sum(targets - output))
-
+from PYSNN import model, layers, activation
 
 netmodel = model([
-	layers.dense(10),
-	layers.dense(1)
+    layers.dense(2, activation.sigmoid),
+	layers.dense(1, activation.sigmoid)
 ])
 
 netmodel.debug = True
 
 netmodel.create(
-    inputs=(4,)
+    inputs=(3,)
 )
 
-testin = np.random.random((1000, 4))
-testout = np.random.random((1000, 1))
+inputs = np.array([
+    [0, 0, 1], #0
+    [0, 0, 0], #0
+    [1, 0, 0], #1
+    [1, 1, 1], #1
+    [0, 1, 0], #1
+    [0, 1, 1] #1
+])
 
-print("predict output before learn: " + str(netmodel.predict(testin[0])))
+targets = np.array([
+    [0],
+    [0],
+    [1],
+    [1],
+    [1],
+    [1],
+])
 
-# learn by test in and out
 netmodel.fit(
-		inputs=testin,
-		targets=testout,
 		rate=1,
-		replication=20,
-		lossfunc=myloss,
+        inputs=inputs,
+        targets=targets,
+		replication=200,
 		epochs=50
 )
 
-print("predict after learn: " + str(netmodel.predict(testin[0])))
-print("real traget:" + str(testout[0]))
+# try predict 1 1 0 -> 1
+print(netmodel.predict([1,1,0]))
