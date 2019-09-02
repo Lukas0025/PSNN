@@ -23,6 +23,7 @@
 #
 
 import copy, threading
+from .loss.basic import mse as defaultloss
 
 class model:
 	'''
@@ -92,14 +93,14 @@ class model:
 			print()
 
 	def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
-		if lossfunc == None:
-			raise ValueError('lossfunc cant by None')
-
 		if replication < 2:
 			raise ValueError('min number of replications is 2')
 
 		if dynRateFunc != None:
 			stockrate = rate
+
+		if lossfunc == None:
+			lossfunc = defaultloss
 
 		for epoch in range(epochs):
 			replications = []
@@ -118,30 +119,13 @@ class model:
 			
 			for j in range(replication):
 				if inputs is None:
-					loss[j] = lossfunc(
-						replications[j]
-					)
-
-					if self.debug:
-						self.printProgressBar(
-							j + 1,
-							replication,
-							prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
-							suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
-							length = 20
-						)
+					loss[j] = lossfunc(replications[j])
 				else:
 					for i in range(len(inputs)):
-						if targets is None:
-							loss[j] += lossfunc(
-								replications[j],
-								inputs[i]
-							)
-						else:	
-							loss[j] += lossfunc(
-								replications[j].predict(inputs[i]),
-								targets[i]
-							)
+						loss[j] += lossfunc.__calc__(
+							replications[j].predict(inputs[i]),
+							targets[i]
+						)
 
 						if self.debug:
 							self.printProgressBar(
