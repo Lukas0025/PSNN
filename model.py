@@ -68,9 +68,15 @@ class model:
 			out = layer.__forward__(out)
 		return out
 
+	def clrmem(self):
+		for layer in self.layers:
+			if hasattr(layer, '__clrmem__'):
+				layer.__clrmem__()
+
 	def evolute(self, rate):
 		for layer in self.layers:
-			layer.__evolute__(rate)
+			if hasattr(layer, '__evolute__'):
+				layer.__evolute__(rate)
 
 	"""
 	Call in a loop to create terminal progress bar
@@ -118,6 +124,9 @@ class model:
 					replications[i].evolute(rate)
 			
 			for j in range(replication):
+
+				replications[j].clrmem()
+
 				if inputs is None:
 					loss[j] = lossfunc(replications[j])
 				else:
