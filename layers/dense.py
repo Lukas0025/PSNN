@@ -23,6 +23,7 @@
 #
 
 import numpy as np
+from ..activation import linear as defaultactivation
 
 '''
 dense layer (fully connect)
@@ -45,7 +46,10 @@ class dense:
     def __init__(self, neurons, activate = None, bias=1):
         self.neurons = neurons
         self.bias = bias
-        self.activate = activate
+        if activate == None:
+            self.activate = defaultactivation
+        else:
+            self.activate = activate
 
     '''
     @param object self
@@ -85,7 +89,7 @@ class dense:
         for i in range(self.neurons):
             out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
-        return self.activate.calc(self.activate, out)
+        return self.activate.__calc__(self.activate, out)
 
     
     def __backprop__(self, error):
