@@ -1,5 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+PYSNN.egg-info/
+build/
 dist/
 *.py[cod]
 *$py.class
