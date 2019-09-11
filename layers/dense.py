@@ -47,7 +47,7 @@ class dense:
         self.neurons = neurons
         self.bias = bias
         if activate == None:
-            self.activate = defaultactivation
+            self.activate = defaultactivation()
         else:
             self.activate = activate
 
@@ -89,7 +89,7 @@ class dense:
         for i in range(self.neurons):
             out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
-        return self.activate.__calc__(self.activate, out)
+        return self.activate.__calc__(out)
 
     
     def __backprop__(self, error):

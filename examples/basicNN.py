@@ -5,8 +5,8 @@ import numpy as np
 from PYSNN import model, layers, activation
 
 netmodel = model([
-    layers.dense(2, activation.sigmoid),
-	layers.dense(1, activation.sigmoid)
+    layers.dense(2, activation.sigmoid()),
+	layers.dense(1, activation.sigmoid())
 ])
 
 netmodel.debug = True
