@@ -1,0 +1,22 @@
+import setuptools
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="PYSNN",
+    version="0.0.1",
+    author="Lukáš Plevač",
+    author_email="lukasplevac@gmail.com",
+    description="PYthon Simple Neural Network - PYSNN is python3 lib for machine learning",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/Lukas0025/PYSNN",
+    packages=setuptools.find_packages(),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: Apache 2.0",
+        "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.0',
+)
