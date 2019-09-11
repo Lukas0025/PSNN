@@ -25,9 +25,9 @@
 import numpy as np
 
 class mae():
-    def __calc__(outputs, targets):
-        return np.sum(np.abs(targets - outputs))
+  def __calc__(outputs, targets):
+      return np.sum(np.abs(targets - outputs))
 
 class mse():
-    def __calc__(outputs, targets):
-        return np.sum((targets - outputs) ** 2)
+  def __calc__(outputs, targets):
+      return np.sum((targets - outputs) ** 2)

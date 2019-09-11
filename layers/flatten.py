@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  recurrent.py
+#  flatten.py
 #  
 #  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>
 #  
@@ -36,28 +36,28 @@ flatten()
 output-shape(20)
 '''
 class flatten:
-    '''
-    @param object self
-    @param int size
-    '''
-    def __init__(self):
-        pass
+  '''
+  @param object self
+  @param int size
+  '''
+  def __init__(self):
+      pass
 
-    '''
-    @param object self
-    @param 1D array of int inputshape
-    '''
-    def __create__(self, inputshape):
-        outshape = [1]
+  '''
+  @param object self
+  @param 1D array of int inputshape
+  '''
+  def __create__(self, inputshape):
+      outshape = [1]
 
-        for i in range(len(inputshape)):
-            outshape[0] * inputshape[i]
+      for i in range(len(inputshape)):
+        outshape[0] * inputshape[i]
 
-        return outshape
+      return outshape
 
-    '''
-    @param object self
-    @param ND array of float inputs
-    '''
-    def __forward__(self, inputs):
-        return inputs.flatten()
+  '''
+  @param object self
+  @param ND array of float inputs
+  '''
+  def __forward__(self, inputs):
+      return inputs.flatten()

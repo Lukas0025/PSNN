@@ -24,8 +24,8 @@
 import numpy as np
 
 class sigmoid:
-    def __calc__(self, x):
-        return 1 / (1 + np.exp(-x))
+  def __calc__(self, x):
+      return 1 / (1 + np.exp(-x))
 
-    def __derivative__(self, x):
-        return self.calc(x) * (1 - self.calc(x))
+  def __derivative__(self, x):
+      return self.__calc__(x) * (1 - self.__calc__(x))

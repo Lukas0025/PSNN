@@ -25,12 +25,12 @@
 import numpy as np
 
 class relu:
-    def __init__(self, a = 0.001):
-        self.a = a
+  def __init__(self, a = 0.001):
+      self.a = a
 
-    def __calc__(self, x):
-        return np.where(x < 0, x, x * self.a)
+  def __calc__(self, x):
+      return np.where(x < 0, x, x * self.a)
 
-    def __derivative__(self, x):
-        out = np.where(x > 0, x, 1)
-        return np.where(out <= 0, out, 0)
+  def __derivative__(self, x):
+      out = np.where(x > 0, x, 1)
+      return np.where(out <= 0, out, 0)

@@ -25,8 +25,8 @@
 import numpy as np
 
 class tanh:
-    def __calc__(self, x):
-        return np.tanh(x)
+  def __calc__(self, x):
+      return np.tanh(x)
 
-    def __derivative__(self, x):
-        return 1 - self.__calc__(x) ** 2
+  def __derivative__(self, x):
+      return 1 - self.__calc__(x) ** 2

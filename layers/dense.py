@@ -37,68 +37,68 @@ dense(3)
 output-shape(3, 10, 2) 
 '''
 class dense:
-    '''
-    @param object self
-    @param int neurons
-    @param class activate
-    @param float bias
-    '''
-    def __init__(self, neurons, activate = None, bias=1):
-        self.neurons = neurons
-        self.bias = bias
-        if activate == None:
-            self.activate = defaultactivation()
-        else:
-            self.activate = activate
+  '''
+  @param object self
+  @param int neurons
+  @param class activate
+  @param float bias
+  '''
+  def __init__(self, neurons, activate = None, bias=1):
+      self.neurons = neurons
+      self.bias = bias
+      if activate == None:
+        self.activate = defaultactivation()
+      else:
+        self.activate = activate
 
-    '''
-    @param object self
-    @param 1D array of int inputshape
-    '''
-    def __create__(self, inputshape):
-        #clac shape for this input schape
-        self.shape = inputshape[:]
-        self.shape.insert(0, self.neurons)
-        #randomize Weights
-        self.randomizeWeights()
+  '''
+  @param object self
+  @param 1D array of int inputshape
+  '''
+  def __create__(self, inputshape):
+      #clac shape for this input schape
+      self.shape = inputshape[:]
+      self.shape.insert(0, self.neurons)
+      #randomize Weights
+      self.randomizeWeights()
 
-        inputshape[0] = self.neurons
-        self.outputshape = inputshape[:]
+      inputshape[0] = self.neurons
+      self.outputshape = inputshape[:]
 
-        return inputshape
+      return inputshape
 
-    '''
-    @param object self
-    '''
-    def randomizeWeights(self):
-        self.weights = np.random.random_sample(self.shape)
+  '''
+  @param object self
+  '''
+  def randomizeWeights(self):
+      self.weights = np.random.random_sample(self.shape)
 
-    '''
-    @param object self
-    @param ND array of float inputs
-    '''
-    def __forward__(self, inputs):
-        #if input.shape != self.shape:
-        #    raise ValueError('Shape for dense layer is incorrent')
+  '''
+  @param object self
+  @param ND array of float inputs
+  '''
+  def __forward__(self, inputs):
+      #if input.shape != self.shape:
+      #  raise ValueError('Shape for dense layer is incorrent')
 
-        return self.layerCalc(inputs)
+      return self.layerCalc(inputs)
 
-    def layerCalc(self, inputs):
-        out = np.zeros(self.outputshape)
+  def layerCalc(self, inputs):
+      out = np.zeros(self.outputshape)
 
-        for i in range(self.neurons):
-            out[i] = np.sum(inputs * self.weights[i], axis = 0)
+      for i in range(self.neurons):
+        out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
-        return self.activate.__calc__(out)
+      return self.activate.__calc__(out)
 
-    
-    def __backprop__(self, error):
-        pass
+  
+  def __backprop__(self, error):
+      pass
 
-    '''
-    @param object self
-    @param rate float
-    '''
-    def __evolute__(self, rate = 0.5):
-        self.weights = self.weights + np.random.uniform(-rate, rate, self.shape)
+  '''
+  @param object self
+  @param rate float
+  '''
+  def __evolute__(self, rate = 0.5):
+      self.weights = self.weights + np.random.uniform(-rate, rate, self.shape)
 

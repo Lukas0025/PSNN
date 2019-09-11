@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  dense.py
+#  activation.py
 #  
 #  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>
 #  
@@ -26,7 +26,7 @@ import numpy as np
 from ..activation import linear as defaultactivation
 
 '''
-dense layer
+activation layer
 
 @input ND numpy arrays
 @output ND numpy array with same shape
@@ -37,30 +37,30 @@ activation()
 output-shape(10, 10, 2) 
 '''
 class activation:
-    '''
-    @param object self
-    @param class activate
-    '''
-    def __init__(self, activate = None):
-        if activate == None:
-            self.activate = defaultactivation()
-        else:
-            self.activate = activate
+  '''
+  @param object self
+  @param class activate
+  '''
+  def __init__(self, activate = None):
+      if activate == None:
+        self.activate = defaultactivation()
+      else:
+        self.activate = activate
 
-    '''
-    @param object self
-    @param 1D array of int inputshape
-    '''
-    def __create__(self, inputshape):
-        return inputshape
+  '''
+  @param object self
+  @param 1D array of int inputshape
+  '''
+  def __create__(self, inputshape):
+      return inputshape
 
-    '''
-    @param object self
-    @param ND array of float inputs
-    '''
-    def __forward__(self, inputs):
-        return self.activate.__calc__(inputs)
+  '''
+  @param object self
+  @param ND array of float inputs
+  '''
+  def __forward__(self, inputs):
+      return self.activate.__calc__(inputs)
 
-    def __backprop__(self, error):
-        pass
+  def __backprop__(self, error):
+      pass
 

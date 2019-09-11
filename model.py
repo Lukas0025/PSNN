@@ -26,134 +26,134 @@ import copy, threading
 from .loss.basic import mse as defaultloss
 
 class model:
-	'''
-	@param object self
-    @param array of classes (layers) layers
-	'''
-	def __init__(self, layers = []):
-		self.debug = False
+  '''
+  @param object self
+  @param array of classes (layers) layers
+  '''
+  def __init__(self, layers = []):
+     self.debug = False
 
-		for layer in layers:
-			if not(hasattr(layer, '__dict__')):
-				raise ValueError('One of the layers is not class.')
-		
-		# store layers
-		self.layers = layers[:]
+     for layer in layers:
+        if not(hasattr(layer, '__dict__')):
+          raise ValueError('One of the layers is not class.')
+     
+     # store layers
+     self.layers = layers[:]
 
-	'''
-	@param object self
-    @param class (layer) layer
-	'''
-	def add(self, layer):
-		if not(hasattr(layer, '__dict__')):
-			raise ValueError('layer is not class.')
-		self.layers.append(layer)
+  '''
+  @param object self
+  @param class (layer) layer
+  '''
+  def add(self, layer):
+     if not(hasattr(layer, '__dict__')):
+        raise ValueError('layer is not class.')
+     self.layers.append(layer)
 
-	'''
-	@param object self
-    @param tuple of shape inputs
-	'''
-	def create(self, inputs):
-		out = list(inputs)
-		for layer in self.layers:
-			out = layer.__create__(out)
+  '''
+  @param object self
+  @param tuple of shape inputs
+  '''
+  def create(self, inputs):
+     out = list(inputs)
+     for layer in self.layers:
+        out = layer.__create__(out)
 
-	'''
-	@param object self
-    @param numpy array inputs
-	'''
-	def predict(self, inputs):
-		out = inputs
-		for layer in self.layers:
-			out = layer.__forward__(out)
-		return out
+  '''
+  @param object self
+  @param numpy array inputs
+  '''
+  def predict(self, inputs):
+     out = inputs
+     for layer in self.layers:
+        out = layer.__forward__(out)
+     return out
 
-	def clrmem(self):
-		for layer in self.layers:
-			if hasattr(layer, '__clrmem__'):
-				layer.__clrmem__()
+  def clrmem(self):
+     for layer in self.layers:
+        if hasattr(layer, '__clrmem__'):
+          layer.__clrmem__()
 
-	def evolute(self, rate):
-		for layer in self.layers:
-			if hasattr(layer, '__evolute__'):
-				layer.__evolute__(rate)
+  def evolute(self, rate):
+     for layer in self.layers:
+        if hasattr(layer, '__evolute__'):
+          layer.__evolute__(rate)
 
-	"""
-	Call in a loop to create terminal progress bar
-	@param iteration   - Required  : current iteration (Int)
-	@param total       - Required  : total iterations (Int)
-	@param prefix      - Optional  : prefix string (Str)
-	@param suffix      - Optional  : suffix string (Str)
-	@param decimals    - Optional  : positive number of decimals in percent complete (Int)
-	@param length      - Optional  : character length of bar (Int)
-	@param fill        - Optional  : bar fill character (Str)
-	"""
-	def printProgressBar (self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
-		percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-		filledLength = int(length * iteration // total)
-		bar = fill * filledLength + '-' * (length - filledLength)
-		print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
-		# Print New Line on Complete
-		if iteration == total: 
-			print()
-			print()
+  """
+  Call in a loop to create terminal progress bar
+  @param iteration  - Required  : current iteration (Int)
+  @param total     - Required  : total iterations (Int)
+  @param prefix    - Optional  : prefix string (Str)
+  @param suffix    - Optional  : suffix string (Str)
+  @param decimals  - Optional  : positive number of decimals in percent complete (Int)
+  @param length    - Optional  : character length of bar (Int)
+  @param fill     - Optional  : bar fill character (Str)
+  """
+  def printProgressBar (self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+     filledLength = int(length * iteration // total)
+     bar = fill * filledLength + '-' * (length - filledLength)
+     print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+     # Print New Line on Complete
+     if iteration == total: 
+        print()
+        print()
 
-	def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
-		if replication < 2:
-			raise ValueError('min number of replications is 2')
+  def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
+     if replication < 2:
+        raise ValueError('min number of replications is 2')
 
-		if dynRateFunc != None:
-			stockrate = rate
+     if dynRateFunc != None:
+        stockrate = rate
 
-		if lossfunc == None:
-			lossfunc = defaultloss
+     if lossfunc == None:
+        lossfunc = defaultloss
 
-		for epoch in range(epochs):
-			replications = []
-			loss = []
+     for epoch in range(epochs):
+        replications = []
+        loss = []
 
-			if dynRateFunc != None:
-				rate = dynRateFunc(stockrate, epoch)
+        if dynRateFunc != None:
+          rate = dynRateFunc(stockrate, epoch)
 
-			for i in range(replication):
-				replications.append(copy.deepcopy(self))
-				loss.append(0)
+        for i in range(replication):
+          replications.append(copy.deepcopy(self))
+          loss.append(0)
 
-				#evolute
-				if i != 0:
-					replications[i].evolute(rate)
-			
-			for j in range(replication):
+          #evolute
+          if i != 0:
+            replications[i].evolute(rate)
+        
+        for j in range(replication):
 
-				replications[j].clrmem()
+          replications[j].clrmem()
 
-				if inputs is None:
-					loss[j] = lossfunc(replications[j])
-				else:
-					for i in range(len(inputs)):
-						loss[j] += lossfunc.__calc__(
-							replications[j].predict(inputs[i]),
-							targets[i]
-						)
+          if inputs is None:
+            loss[j] = lossfunc(replications[j])
+          else:
+            for i in range(len(inputs)):
+              loss[j] += lossfunc.__calc__(
+                 replications[j].predict(inputs[i]),
+                 targets[i]
+              )
 
-						if self.debug:
-							self.printProgressBar(
-								j * len(inputs) + (i + 1),
-								replication * len(inputs),
-								prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
-								suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
-								length = 20
-							)
+              if self.debug:
+                 self.printProgressBar(
+                    j * len(inputs) + (i + 1),
+                    replication * len(inputs),
+                    prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
+                    suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
+                    length = 20
+                 )
 
-			#select the best
-			minLoss = 0
+        #select the best
+        minLoss = 0
 
-			for i in range(len(loss)):
-				if loss[i] < loss[minLoss]:
-					minLoss = i
-				
-			self.layers = replications[minLoss].layers
+        for i in range(len(loss)):
+          if loss[i] < loss[minLoss]:
+            minLoss = i
+          
+        self.layers = replications[minLoss].layers
 
-	def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
-		if type == "evolution":
-			return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc)
+  def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
+     if type == "evolution":
+        return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc)

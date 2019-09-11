@@ -36,38 +36,38 @@ recurrent(3)
 output-shape(3, 10, 10, 2) 
 '''
 class recurrent:
-    '''
-    @param object self
-    @param int size
-    '''
-    def __init__(self, size):
-        self.size = size
+  '''
+  @param object self
+  @param int size
+  '''
+  def __init__(self, size):
+      self.size = size
 
-    def __clrmem__(self):
-        self.mem = []
+  def __clrmem__(self):
+      self.mem = []
 
-        for i in range(self.size):
-            self.mem.append(np.zeros(self.shape))
+      for i in range(self.size):
+        self.mem.append(np.zeros(self.shape))
 
-    def addToMem(self, data):
-        del self.mem[-1]
-        self.mem.insert(0, data)
+  def addToMem(self, data):
+      del self.mem[-1]
+      self.mem.insert(0, data)
 
-    '''
-    @param object self
-    @param 1D array of int inputshape
-    '''
-    def __create__(self, inputshape):
-        self.shape = inputshape[:]
-        self.__clrmem__()
+  '''
+  @param object self
+  @param 1D array of int inputshape
+  '''
+  def __create__(self, inputshape):
+      self.shape = inputshape[:]
+      self.__clrmem__()
 
-        inputshape.insert(0, self.size)
-        return inputshape
+      inputshape.insert(0, self.size)
+      return inputshape
 
-    '''
-    @param object self
-    @param ND array of float inputs
-    '''
-    def __forward__(self, inputs):
-        self.addToMem(inputs)
-        return np.array(self.mem)
+  '''
+  @param object self
+  @param ND array of float inputs
+  '''
+  def __forward__(self, inputs):
+      self.addToMem(inputs)
+      return np.array(self.mem)

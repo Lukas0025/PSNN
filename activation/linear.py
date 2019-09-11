@@ -25,8 +25,8 @@
 import numpy as np
 
 class linear:
-	def __calc__(self, x):
-		return x
-	
-	def __derivative__(self, x):
-		return np.ones(x.shape)
+  def __calc__(self, x):
+      return x
+  
+  def __derivative__(self, x):
+      return np.ones(x.shape)
