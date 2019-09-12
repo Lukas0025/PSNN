@@ -4,8 +4,18 @@
 import numpy as np
 from PYSNN import model, layers, activation
 
-def myloss(outputs, targets):
-  return np.absolute(np.sum(targets - outputs))
+class myloss:
+  # this is calc loss normaly
+  # @param outputs numpy array
+  # @param targets numpy array
+  def __clac__(self, outputs, targets):
+    return targets - outputs
+
+  # this return one value loss must by abs
+  # @param outputs numpy array
+  # @param targets numpy array
+  def __clac1V__(self, outputs, targets):
+    return np.absolute(np.sum(self.__clac__(outputs, targets)))
 
 
 netmodel = model([
@@ -30,7 +40,7 @@ netmodel.fit(
   targets=testout,
   rate=1,
   replication=20,
-  lossfunc=myloss,
+  lossfunc=myloss(),
   epochs=50
 )
 
