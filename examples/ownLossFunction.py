@@ -6,16 +6,16 @@ from PYSNN import model, layers, activation
 
 class myloss:
   # this is calc loss normaly
-  # @param outputs numpy array
-  # @param targets numpy array
-  def __clac__(self, outputs, targets):
+  # @param outputs np array
+  # @param targets np array
+  def __calc__(self, outputs, targets):
     return targets - outputs
 
   # this return one value loss must by abs
-  # @param outputs numpy array
-  # @param targets numpy array
+  # @param outputs np array
+  # @param targets np array
   def __clac1V__(self, outputs, targets):
-    return np.absolute(np.sum(self.__clac__(outputs, targets)))
+    return np.absolute(np.sum(self.__calc__(outputs, targets)))
 
 
 netmodel = model([
