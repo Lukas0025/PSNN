@@ -22,7 +22,7 @@
 #  
 #
 
-import copy, threading
+import copy
 from .loss.basic import mse as defaultloss
 
 class model:
@@ -98,6 +98,46 @@ class model:
         print()
         print()
 
+  def backPropagation(self, inputdata, target, lossfunc=None, rate=1):
+     if lossfunc == None:
+        lossfunc = defaultloss()
+
+     inputs = []
+     inputs.append(inputdata)
+    
+     # do predict first
+     for layer in self.layers:
+       inputs.append(layer.__forward__(inputs[-1]))
+	  
+     # calc error on output
+     fail = lossfunc.__calc__(inputs[-1], target)
+        
+     for i in range(len(self.layers) - 1, -1, -1):
+        if hasattr(self.layers[i], '__backprop__'):
+          fail = self.layers[i].__backprop__(inputs[i], inputs[i + 1], fail, rate)
+		
+     return lossfunc.__clac1V__(inputs[-1], target)
+
+
+  def backPropagationFit(self, inputs, targets, lossfunc=None, rate=1, epochs=1):
+    for epoch in range(epochs):
+      
+      loss = 0
+      
+      for i in range(len(inputs)):
+        
+        loss += self.backPropagation(inputs[i], targets[i], lossfunc, rate)
+
+        if self.debug:
+           self.printProgressBar(
+                                 i + 1,
+                                 len(inputs),
+                                 prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
+                                 suffix = 'Complete AVG loss: ' + str(loss / (i + 1)),
+                                 length = 20
+          )
+
+
   def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
      if replication < 2:
         raise ValueError('min number of replications is 2')
@@ -106,7 +146,7 @@ class model:
         stockrate = rate
 
      if lossfunc == None:
-        lossfunc = defaultloss
+        lossfunc = defaultloss()
 
      for epoch in range(epochs):
         replications = []
@@ -131,7 +171,7 @@ class model:
             loss[j] = lossfunc(replications[j])
           else:
             for i in range(len(inputs)):
-              loss[j] += lossfunc.__calc__(
+              loss[j] += lossfunc.__clac1V__(
                  replications[j].predict(inputs[i]),
                  targets[i]
               )
@@ -157,3 +197,5 @@ class model:
   def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
      if type == "evolution":
         return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc)
+     elif type == "backPropagation":
+        return self.backPropagationFit(inputs, targets, lossfunc, rate, epochs)

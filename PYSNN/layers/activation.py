@@ -61,6 +61,11 @@ class activation:
   def __forward__(self, inputs):
       return self.activate.__calc__(inputs)
 
-  def __backprop__(self, error):
-      pass
+  def __backprop__(self, inputs, output, fail, rate):
+    nextfail = []
+
+    for i in range(len(fail)):
+      nextfail.append(self.activate.__derivative__(output[i]) * fail[i])
+
+    return np.array(nextfail)
 

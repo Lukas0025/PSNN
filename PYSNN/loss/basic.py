@@ -25,9 +25,18 @@
 import numpy as np
 
 class mae():
-  def __calc__(outputs, targets):
-      return np.sum(np.abs(targets - outputs))
+  def __calc__(self, outputs, targets):
+    return targets - outputs
+
+  def __clac1V__(self, outputs, targets):
+    return abs(np.sum(self.__calc__(outputs, targets)))
 
 class mse():
-  def __calc__(outputs, targets):
-      return np.sum((targets - outputs) ** 2)
+  def __calc__(self, outputs, targets):
+    oriantion = np.where(targets - outputs < 0, targets - outputs, 1)
+    oriantion = np.where(oriantion >= 0, oriantion, -1)
+
+    return (targets - outputs) ** 2 * oriantion
+
+  def __clac1V__(self, outputs, targets):
+    return abs(np.sum(self.__calc__(outputs, targets)))

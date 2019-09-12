@@ -78,7 +78,7 @@ class dense:
   @param ND array of float inputs
   '''
   def __forward__(self, inputs):
-      #if input.shape != self.shape:
+      #if input.shape != self.shape[1:]:
       #  raise ValueError('Shape for dense layer is incorrent')
 
       return self.layerCalc(inputs)
@@ -92,8 +92,21 @@ class dense:
       return self.activate.__calc__(out)
 
   
-  def __backprop__(self, error):
-      pass
+  def __backprop__(self, inputs, output, fail, rate):
+    nextfail = []
+
+    # calc previous layer error
+    for i in range(len(inputs)):
+      nextfail.append(
+        np.sum(fail * self.weights.T[i]) * self.activate.__derivative__(inputs[i])
+      )
+
+    # correct weights
+    # inputs * fail * activate.derivative(output)
+    for i in range(self.neurons):
+      self.weights[i] = self.weights[i] + inputs * fail[i] * self.activate.__derivative__(output[i]) * rate
+
+    return np.array(nextfail)
 
   '''
   @param object self
