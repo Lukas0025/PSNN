@@ -29,7 +29,7 @@ class mae():
     return targets - outputs
 
   def __clac1V__(self, outputs, targets):
-    return abs(np.sum(self.__calc__(outputs, targets)))
+    return np.sum(np.abs(self.__calc__(outputs, targets)))
 
 class mse():
   def __calc__(self, outputs, targets):
@@ -39,4 +39,4 @@ class mse():
     return (targets - outputs) ** 2 * oriantion
 
   def __clac1V__(self, outputs, targets):
-    return abs(np.sum(self.__calc__(outputs, targets)))
+    return np.sum(np.abs(self.__calc__(outputs, targets)))
