@@ -119,14 +119,17 @@ class model:
      return lossfunc.__clac1V__(inputs[-1], target)
 
 
-  def backPropagationFit(self, inputs, targets, lossfunc=None, rate=1, epochs=1):
+  def backPropagationFit(self, inputs, targets, lossfunc=None, rate=1, epochs=1, offset=0):
     for epoch in range(epochs):
       
       loss = 0
       
       for i in range(len(inputs)):
-        
-        loss += self.backPropagation(inputs[i], targets[i], lossfunc, rate)
+        if offset <= i:
+          loss += self.backPropagation(inputs[i], targets[i], lossfunc, rate)
+        else:
+           # do only forward no backprop
+           self.predict(inputs[i])
 
         if self.debug:
            self.printProgressBar(
@@ -138,7 +141,7 @@ class model:
           )
 
 
-  def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
+  def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
      if replication < 2:
         raise ValueError('min number of replications is 2')
 
@@ -171,10 +174,14 @@ class model:
             loss[j] = lossfunc(replications[j])
           else:
             for i in range(len(inputs)):
-              loss[j] += lossfunc.__clac1V__(
-                 replications[j].predict(inputs[i]),
-                 targets[i]
-              )
+              if offset <= i:
+                loss[j] += lossfunc.__clac1V__(
+                  replications[j].predict(inputs[i]),
+                  targets[i]
+                )
+              else:
+                 # do only forward no calc error
+                 replications[j].predict(inputs[i])
 
               if self.debug:
                  self.printProgressBar(
@@ -194,8 +201,8 @@ class model:
           
         self.layers = replications[minLoss].layers
 
-  def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None):
+  def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
      if type == "evolution":
-        return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc)
+        return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
      elif type == "backPropagation":
-        return self.backPropagationFit(inputs, targets, lossfunc, rate, epochs)
+        return self.backPropagationFit(inputs, targets, lossfunc, rate, epochs, offset)
