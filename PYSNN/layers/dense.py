@@ -38,22 +38,33 @@ output-shape(3, 10, 2)
 '''
 class dense:
   '''
+  This function be called when code create layer it define 
+  how many neurons is in this layer is, what act function neurons
+  using and what bias number be used
+  
   @param object self
-  @param int neurons
-  @param class activate
-  @param float bias
+  @param int neurons - number of neurons (required)
+  @param object activate - Instance of activation function class (default is linear) 
+  @param float bias - bias input number (default is 1)
+  @return None
   '''
   def __init__(self, neurons, activate = None, bias=1):
       self.neurons = neurons
       self.bias = bias
+      # when activate is none use defaultactivation
       if activate == None:
         self.activate = defaultactivation()
       else:
         self.activate = activate
 
   '''
+  This function has be called when network model
+  is being formed it create array for weights and randomize it.
+  it also defines what the output shape will be
+
   @param object self
-  @param 1D array of int inputshape
+  @param array inputshape - shape of input array
+  @return array - shape of output array
   '''
   def __create__(self, inputshape):
       # clac weight shape for this input shape [down] [self.shape == shape of weights array]
@@ -65,20 +76,27 @@ class dense:
       # randomize Weights
       self.randomizeWeights()
 
+      # create output shape
       inputshape[0] = self.neurons
       self.outputshape = inputshape[:]
 
       return inputshape
 
   '''
+  This function randomize weights
+  all of memory will be lost
   @param object self
   '''
   def randomizeWeights(self):
       self.weights = np.random.random_sample(self.shape)
 
   '''
+  This function has be called when network model do prediction.
+  It do prediction with inputs and return predicted values
+
   @param object self
-  @param ND array of float inputs
+  @param numpy array inputs - array with input data with correct shape
+  @return numpy array - predicted values
   '''
   def __forward__(self, inputs):
       #if input.shape != self.shape[1:]:
@@ -89,13 +107,27 @@ class dense:
       # add bias to input array
       inputs = np.append(inputs, [bias], axis = 0) 
 
+      # init output array
       out = np.zeros(self.outputshape)
 
+      # multiply inputs with theier weights for every neuron 
       for i in range(self.neurons):
         out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
+      # use activition function and return prediction
       return self.activate.__calc__(out)  
   
+  '''
+  This function has be called when network model do backpropagation learning.
+  It correct weights by error. It calc error of previous layer too.
+
+  @param object self
+  @param numpy array inputs - array with input data with correct shape
+  @param numpy array output - array with output data (what layer predicted) with correct shape
+  @param numpy array fail - array with fail (base: target - output) with correct shape
+  @param float rate - rate value (size of correction jump)
+  @return numpy array - error of previous layer
+  '''
   def __backprop__(self, inputs, output, fail, rate):
     nextfail = []
 
@@ -113,8 +145,11 @@ class dense:
     return np.array(nextfail)
 
   '''
+  This function has be called when you what randomly evolute layer.
+  It add random number to every weight in range(-rate, rate).
+
   @param object self
-  @param rate float
+  @param rate float - range of random number
   '''
   def __evolute__(self, rate = 0.5):
       self.weights = self.weights + np.random.uniform(-rate, rate, self.shape)
