@@ -150,6 +150,7 @@ class dense:
 
   @param object self
   @param rate float - range of random number
+  @return none
   '''
   def __evolute__(self, rate = 0.5):
       self.weights = self.weights + np.random.uniform(-rate, rate, self.shape)
