@@ -56,10 +56,13 @@ class dense:
   @param 1D array of int inputshape
   '''
   def __create__(self, inputshape):
-      #clac shape for this input schape
+      # clac weight shape for this input shape [down] [self.shape == shape of weights array]
       self.shape = inputshape[:]
+      # because BIAS :D [bias is input too in every sum]
+      self.shape[0] += 1
+      # insert num of neurons as first shape [every neuron need weight for every input]
       self.shape.insert(0, self.neurons)
-      #randomize Weights
+      # randomize Weights
       self.randomizeWeights()
 
       inputshape[0] = self.neurons
@@ -80,6 +83,11 @@ class dense:
   def __forward__(self, inputs):
       #if input.shape != self.shape[1:]:
       #  raise ValueError('Shape for dense layer is incorrent')
+
+      # create array with bias we need one bias for one sum
+      bias = np.full(self.shape[2:], self.bias)
+      # add bias to input array
+      inputs = np.append(inputs, [bias], axis = 0) 
 
       out = np.zeros(self.outputshape)
 
