@@ -81,16 +81,12 @@ class dense:
       #if input.shape != self.shape[1:]:
       #  raise ValueError('Shape for dense layer is incorrent')
 
-      return self.layerCalc(inputs)
-
-  def layerCalc(self, inputs):
       out = np.zeros(self.outputshape)
 
       for i in range(self.neurons):
         out[i] = np.sum(inputs * self.weights[i], axis = 0)
 
-      return self.activate.__calc__(out)
-
+      return self.activate.__calc__(out)  
   
   def __backprop__(self, inputs, output, fail, rate):
     nextfail = []
