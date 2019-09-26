@@ -1,4 +1,4 @@
-[![PYSNN](https://github.com/Lukas0025/PYSNN/raw/develop/assets/logo.svg)](https://pypi.org/project/PYSNN/)
+[![PYSNN](https://raw.githubusercontent.com/Lukas0025/PYSNN/master/assets/logo.svg)](https://pypi.org/project/PYSNN/)
 
 [![issues](https://img.shields.io/github/issues/Lukas0025/PYSNN)](https://github.com/Lukas0025/PYSNN/issues)
 [![closed issues](https://img.shields.io/github/issues-closed-raw/Lukas0025/PYSNN)](https://github.com/Lukas0025/PYSNN/issues)
