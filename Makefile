@@ -1,10 +1,10 @@
-build: setup.py
+dist: setup.py
 	python3 setup.py sdist
 
-install:
+install: dist
 	pip3 install dist/*
 
-upload:
+upload: dist
 	twine upload dist/*
 
 clean:
