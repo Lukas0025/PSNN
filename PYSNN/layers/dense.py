@@ -131,8 +131,13 @@ class dense:
   def __backprop__(self, inputs, output, fail, rate):
     nextfail = []
 
+    # create array with bias we need one bias for one sum
+    bias = np.full(self.shape[2:], self.bias)
+    # add bias to input array
+    inputs = np.append(inputs, [bias], axis = 0) 
+
     # calc previous layer error
-    for i in range(len(inputs)):
+    for i in range(len(inputs) - 1): # do not pass bias here (it is not from previous layer)
       nextfail.append(
         np.sum(fail * self.weights.T[i]) * self.activate.__derivative__(inputs[i])
       )
