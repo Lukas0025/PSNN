@@ -27,8 +27,11 @@ from .loss.basic import mse as defaultloss
 
 class model:
   '''
+  create netmodel from layers array
+
   @param object self
-  @param array of classes (layers) layers
+  @param array of object layers - array of instances of layers classes - Optional
+  @return None
   '''
   def __init__(self, layers = []):
      self.debug = False
@@ -41,8 +44,11 @@ class model:
      self.layers = layers[:]
 
   '''
+  add new layer to network model (when netmodel is not created)
+
   @param object self
-  @param class (layer) layer
+  @param object layer - Instance of layer class
+  @return None
   '''
   def add(self, layer):
      if not(hasattr(layer, '__dict__')):
@@ -50,8 +56,12 @@ class model:
      self.layers.append(layer)
 
   '''
+  create netmodel init weigths and another thing
+  using __create__() function in every layer
+
   @param object self
-  @param tuple of shape inputs
+  @param tuple inputs - shape of input e.g (10,10)
+  @return None
   '''
   def create(self, inputs):
      out = list(inputs)
@@ -59,8 +69,11 @@ class model:
         out = layer.__create__(out)
 
   '''
+  predict output form input data
+
   @param object self
-  @param numpy array inputs
+  @param numpy array inputs - array of inputs for network
+  @return numpy array - prediction
   '''
   def predict(self, inputs):
      out = inputs
@@ -68,25 +81,41 @@ class model:
         out = layer.__forward__(out)
      return out
 
+  '''
+  clear memory based on Recurrnet architecture
+
+  @param object self
+  @return None
+  '''
   def clrmem(self):
      for layer in self.layers:
         if hasattr(layer, '__clrmem__'):
           layer.__clrmem__()
 
+  '''
+  randomly evolute network using 
+  random numbers based on rate. 
+  Each layer can use the rate differently,
+  usually generate random between -rate and rate
+
+  @param object self
+  @return None
+  '''
   def evolute(self, rate):
      for layer in self.layers:
         if hasattr(layer, '__evolute__'):
           layer.__evolute__(rate)
 
   """
-  Call in a loop to create terminal progress bar
-  @param iteration  - Required  : current iteration (Int)
-  @param total     - Required  : total iterations (Int)
-  @param prefix    - Optional  : prefix string (Str)
-  @param suffix    - Optional  : suffix string (Str)
-  @param decimals  - Optional  : positive number of decimals in percent complete (Int)
-  @param length    - Optional  : character length of bar (Int)
-  @param fill     - Optional  : bar fill character (Str)
+  create terminal progress bar
+
+  @param int iteration - current iteration
+  @param int total - total iterations
+  @param str prefix - prefix string (default is '')
+  @param str suffix - suffix string (default is '')
+  @param int decimals - positive number of decimals in percent complete (default is 1)
+  @param int length - character length of bar (default is 100)
+  @param str fill - bar fill character (default is '█')
   """
   def printProgressBar (self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
      percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
@@ -98,6 +127,16 @@ class model:
         print()
         print()
 
+  '''
+  do backpropagation for one inputdata and one taget
+
+  @param object self
+  @param numpy array inputdata - inputdata for network
+  @param numpy array target - target (output) for inputdata
+  @param object lossfunction - Instance of loss function class (default is MSE)
+  @param float rate - rate value (size of correction jump)
+  @return float - loss of model before learn
+  '''
   def backPropagation(self, inputdata, target, lossfunc=None, rate=1):
      if lossfunc == None:
         lossfunc = defaultloss()
@@ -118,9 +157,28 @@ class model:
 		
      return lossfunc.__clac1V__(inputs[-1], target)
 
+  '''
+  do backpropagation for array of inputdata and array of tagets
 
-  def backPropagationFit(self, inputs, targets, lossfunc=None, rate=1, epochs=1, offset=0):
+  @param object self
+  @param array of numpy arrays inputs - array of inputs data for network
+  @param array of numpy array targets - array of targets (outputs) for inputs data
+  @param object lossfunction - Instance of loss function class (default is MSE)
+  @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
+  @param float rate - rate value (size of correction jump)
+  @param int epochs - number of backpropagation loops with data (default is 1)
+  @param int offset - number of skiped elements for what do not do backpropagation only forward 
+  @return float - loss of model before last learn loop
+  '''
+  def backPropagationFit(self, inputs, targets, lossfunc=None, dynRateFunc=None, rate=1, epochs=1, offset=0):
+    
+    if dynRateFunc != None:
+      stockrate = rate
+
     for epoch in range(epochs):
+      
+      if dynRateFunc != None:
+         rate = dynRateFunc(stockrate, epoch)
       
       loss = 0
       
@@ -140,7 +198,22 @@ class model:
                                  length = 20
           )
 
+    return loss
 
+  '''
+  do learning using evolution (create copy of network, evolute every copy and select the copy closest to the target)
+
+  @param object self
+  @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+  @param array of numpy array targets - array of targets (outputs) for inputs data
+  @param object lossfunction - Instance of loss function class (default is MSE)
+  @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
+  @param float rate - rate value for evolute() function (default is 1)
+  @param int replication - number of copyes (default is 20)
+  @param int epochs - number of backpropagation loops with data (default is 1)
+  @param int offset - number of skiped elements for what do not do backpropagation only forward 
+  @return float - loss of model before last learn loop
+  '''
   def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
      if replication < 2:
         raise ValueError('min number of replications is 2')
@@ -154,27 +227,31 @@ class model:
      for epoch in range(epochs):
         replications = []
         loss = []
-
+        
+        # use dyn Rate if is definite
         if dynRateFunc != None:
           rate = dynRateFunc(stockrate, epoch)
 
+        # make copyes of network
         for i in range(replication):
           replications.append(copy.deepcopy(self))
           loss.append(0)
 
-          #evolute
+          # evolute
           if i != 0:
             replications[i].evolute(rate)
         
+        # test every replication how is it best
         for j in range(replication):
-
+          # clear Reccurent base memery
           replications[j].clrmem()
-
+          # if inputs is not definite use loss function to get loss
           if inputs is None:
             loss[j] = lossfunc(replications[j])
           else:
             for i in range(len(inputs)):
               if offset <= i:
+                # calc error
                 loss[j] += lossfunc.__clac1V__(
                   replications[j].predict(inputs[i]),
                   targets[i]
@@ -192,17 +269,35 @@ class model:
                     length = 20
                  )
 
-        #select the best
+        # select the best
         minLoss = 0
 
         for i in range(len(loss)):
           if loss[i] < loss[minLoss]:
             minLoss = i
-          
+         
+        # set BEST as current
         self.layers = replications[minLoss].layers
+     
+     return minLoss
 
+  '''
+  fit model with data and targets with specific method
+
+  @param object self
+  @param str type - type of fit method evolution/backPropagation (default is "evolution")
+  @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+  @param array of numpy array targets - array of targets (outputs) for inputs data
+  @param object lossfunction - Instance of loss function class (default is MSE)
+  @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
+  @param float rate - rate value for evolute() function (default is 1)
+  @param int replication - number of copyes (default is 20)
+  @param int epochs - number of backpropagation loops with data (default is 1)
+  @param int offset - number of skiped elements for what do not do backpropagation only forward 
+  @return float - loss of model before last learn loop
+  '''
   def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
      if type == "evolution":
         return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
      elif type == "backPropagation":
-        return self.backPropagationFit(inputs, targets, lossfunc, rate, epochs, offset)
+        return self.backPropagationFit(inputs, targets, lossfunc, dynRateFunc, rate, epochs, offset)
