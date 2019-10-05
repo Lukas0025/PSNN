@@ -51,7 +51,7 @@ class flatten:
       outshape = [1]
 
       for i in range(len(inputshape)):
-        outshape[0] * inputshape[i]
+        outshape[0] *= inputshape[i]
 
       return outshape
 
