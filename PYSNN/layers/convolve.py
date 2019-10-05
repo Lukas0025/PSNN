@@ -115,12 +115,9 @@ class convolve:
   @param float rate - rate value (size of correction jump)
   @return numpy array - error of previous layer
   @todo
-  def __backprop__(self, inputs, output, fail, rate):
-    nextfail = self.convolve2d(inputs, self.kernel)
-
-
-    return np.array(nextfail)
   '''
+  def __backprop__(self, inputs, output, fail, rate):
+    raise Exception('convolve layer not support backprop learning now. sorry')
 
   '''
   This function has be called when you what randomly evolute layer.
