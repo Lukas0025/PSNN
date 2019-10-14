@@ -279,7 +279,7 @@ class model:
         # set BEST as current
         self.layers = replications[minLoss].layers
      
-     return minLoss
+     return loss[minLoss]
 
   '''
   fit model with data and targets with specific method
