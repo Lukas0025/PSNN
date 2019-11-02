@@ -22,7 +22,7 @@
 #  
 #
 
-import copy
+import copy, pickle
 from .loss.basic import mse as defaultloss
 
 class model:
@@ -42,6 +42,49 @@ class model:
      
      # store layers
      self.layers = layers[:]
+
+  '''
+  store model to file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def dump(self, file):
+     filehandler = open(file, "wb")
+     pickle.dump(self.layers, filehandler)
+     filehandler.close()
+
+  '''
+  store model to string
+
+  @param object self
+  @return pickle string
+  '''
+  def dumps(self):
+     return pickle.dumps(self.layers)
+
+  '''
+  load model from file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def load(self, file):
+     filehandler = open(file, "rb")
+     self.layers = pickle.load(filehandler)
+     filehandler.close()
+
+  '''
+  load model from string
+
+  @param object self
+  @param str string - data from dumps()
+  @return None
+  '''
+  def loads(self, string):
+     self.layers = pickle.loads(string)
 
   '''
   add new layer to network model (when netmodel is not created)
