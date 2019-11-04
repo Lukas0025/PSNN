@@ -159,4 +159,4 @@ class dense:
   @return none
   '''
   def __mutate__(self, rate = 0.5):
-      self.weights = self.weights + np.random.randn(self.shape) * 0.20 * rate
+      self.weights = self.weights + np.random.randn(*self.shape) * 0.20 * rate
