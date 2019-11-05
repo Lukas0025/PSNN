@@ -1,11 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  model.py
-#  
-#  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>
-#  
-#  This program is free software; you can redistribute it and/or modify
+#!/usr/bin/env python	
+# -*- coding: utf-8 -*-	
+#	
+#  model.py	
+#  	
+#  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>	
+#  	
+#  This program is free software; you can redistribute it and/or modify	
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
@@ -22,7 +22,7 @@
 #  
 #
 
-import copy
+import copy, multiprocessing, pickle
 from .loss.basic import mse as defaultloss
 
 class model:
@@ -42,6 +42,49 @@ class model:
      
      # store layers
      self.layers = layers[:]
+
+  '''
+  store model to file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def dump(self, file):
+     filehandler = open(file, "wb")
+     pickle.dump(self.layers, filehandler)
+     filehandler.close()
+
+  '''
+  store model to string
+
+  @param object self
+  @return pickle string
+  '''
+  def dumps(self):
+     return pickle.dumps(self.layers)
+
+  '''
+  load model from file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def load(self, file):
+     filehandler = open(file, "rb")
+     self.layers = pickle.load(filehandler)
+     filehandler.close()
+
+  '''
+  load model from string
+
+  @param object self
+  @param str string - data from dumps()
+  @return None
+  '''
+  def loads(self, string):
+     self.layers = pickle.loads(string)
 
   '''
   add new layer to network model (when netmodel is not created)
@@ -93,7 +136,7 @@ class model:
           layer.__clrmem__()
 
   '''
-  randomly evolute network using 
+  randomly mutate network using 
   random numbers based on rate. 
   Each layer can use the rate differently,
   usually generate random between -rate and rate
@@ -101,10 +144,10 @@ class model:
   @param object self
   @return None
   '''
-  def evolute(self, rate):
+  def mutate(self, rate):
      for layer in self.layers:
-        if hasattr(layer, '__evolute__'):
-          layer.__evolute__(rate)
+        if hasattr(layer, '__mutate__'):
+          layer.__mutate__(rate)
 
   """
   create terminal progress bar
@@ -200,15 +243,16 @@ class model:
 
     return loss
 
+
   '''
-  do learning using evolution (create copy of network, evolute every copy and select the copy closest to the target)
+  do learning using evolution (create copy of network, mutate every copy and select the copy closest to the target)
 
   @param object self
   @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
   @param array of numpy array targets - array of targets (outputs) for inputs data
   @param object lossfunction - Instance of loss function class (default is MSE)
   @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-  @param float rate - rate value for evolute() function (default is 1)
+  @param float rate - rate value for mutate() function (default is 1)
   @param int replication - number of copyes (default is 20)
   @param int epochs - number of backpropagation loops with data (default is 1)
   @param int offset - number of skiped elements for what do not do backpropagation only forward 
@@ -237,9 +281,9 @@ class model:
           replications.append(copy.deepcopy(self))
           loss.append(0)
 
-          # evolute
+          # mutation
           if i != 0:
-            replications[i].evolute(rate)
+            replications[i].mutate(rate)
         
         # test every replication how is it best
         for j in range(replication):
@@ -266,8 +310,9 @@ class model:
                     replication * len(inputs),
                     prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
                     suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
-                    length = 20
+		    length = 20	
                  )
+                    
 
         # select the best
         minLoss = 0
@@ -279,7 +324,7 @@ class model:
         # set BEST as current
         self.layers = replications[minLoss].layers
      
-     return minLoss
+     return loss[minLoss]
 
   '''
   fit model with data and targets with specific method
@@ -290,7 +335,7 @@ class model:
   @param array of numpy array targets - array of targets (outputs) for inputs data
   @param object lossfunction - Instance of loss function class (default is MSE)
   @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-  @param float rate - rate value for evolute() function (default is 1)
+  @param float rate - rate value for  mutate() function (default is 1)
   @param int replication - number of copyes (default is 20)
   @param int epochs - number of backpropagation loops with data (default is 1)
   @param int offset - number of skiped elements for what do not do backpropagation only forward 

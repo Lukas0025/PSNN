@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="PYSNN",
-    version="0.0.4",
+    version="0.0.8",
     author="Lukáš Plevač",
     author_email="lukasplevac@gmail.com",
     description="PYthon Simple Neural Network - PYSNN is python3 lib for machine learning",
