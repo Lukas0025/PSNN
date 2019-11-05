@@ -22,7 +22,7 @@
 #  
 #
 
-import copy, multiprocessing
+import copy, multiprocessing, pickle
 from itertools import product
 from .loss.basic import mse as defaultloss
 
@@ -43,6 +43,49 @@ class model:
      
      # store layers
      self.layers = layers[:]
+
+  '''
+  store model to file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def dump(self, file):
+     filehandler = open(file, "wb")
+     pickle.dump(self.layers, filehandler)
+     filehandler.close()
+
+  '''
+  store model to string
+
+  @param object self
+  @return pickle string
+  '''
+  def dumps(self):
+     return pickle.dumps(self.layers)
+
+  '''
+  load model from file
+
+  @param object self
+  @param str file - file name
+  @return None
+  '''
+  def load(self, file):
+     filehandler = open(file, "rb")
+     self.layers = pickle.load(filehandler)
+     filehandler.close()
+
+  '''
+  load model from string
+
+  @param object self
+  @param str string - data from dumps()
+  @return None
+  '''
+  def loads(self, string):
+     self.layers = pickle.loads(string)
 
   '''
   add new layer to network model (when netmodel is not created)
@@ -94,7 +137,7 @@ class model:
           layer.__clrmem__()
 
   '''
-  randomly evolute network using 
+  randomly mutate network using 
   random numbers based on rate. 
   Each layer can use the rate differently,
   usually generate random between -rate and rate
@@ -102,10 +145,10 @@ class model:
   @param object self
   @return None
   '''
-  def evolute(self, rate):
+  def mutate(self, rate):
      for layer in self.layers:
-        if hasattr(layer, '__evolute__'):
-          layer.__evolute__(rate)
+        if hasattr(layer, '__mutate__'):
+          layer.__mutate__(rate)
 
   """
   create terminal progress bar
@@ -203,14 +246,14 @@ class model:
 
 
   '''
-  do learning using evolution (create copy of network, evolute every copy and select the copy closest to the target)
+  do learning using evolution (create copy of network, mutate every copy and select the copy closest to the target)
 
   @param object self
   @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
   @param array of numpy array targets - array of targets (outputs) for inputs data
   @param object lossfunction - Instance of loss function class (default is MSE)
   @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-  @param float rate - rate value for evolute() function (default is 1)
+  @param float rate - rate value for mutate() function (default is 1)
   @param int replication - number of copyes (default is 20)
   @param int epochs - number of backpropagation loops with data (default is 1)
   @param int offset - number of skiped elements for what do not do backpropagation only forward 
@@ -239,10 +282,9 @@ class model:
           replications.append(copy.deepcopy(self))
           loss.append(0)
 
-          # evolute
+          # mutation
           if i != 0:
-            replications[i].evolute(rate)
-
+            replications[i].mutate(rate)
         # test every replication how is it best
         loss = []
         p = multiprocessing.Pool(8)
@@ -278,7 +320,7 @@ class model:
   @param array of numpy array targets - array of targets (outputs) for inputs data
   @param object lossfunction - Instance of loss function class (default is MSE)
   @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-  @param float rate - rate value for evolute() function (default is 1)
+  @param float rate - rate value for  mutate() function (default is 1)
   @param int replication - number of copyes (default is 20)
   @param int epochs - number of backpropagation loops with data (default is 1)
   @param int offset - number of skiped elements for what do not do backpropagation only forward 
