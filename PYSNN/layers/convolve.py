@@ -127,6 +127,6 @@ class convolve:
   @param rate float - range of random number
   @return none
   '''
-  def __evolute__(self, rate = 0.5):
+  def __mutate__(self, rate = 0.5):
     self.kernel = self.kernel + np.random.uniform(-rate, rate, self.kSize)
 

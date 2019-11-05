@@ -150,13 +150,13 @@ class dense:
     return np.array(nextfail)
 
   '''
-  This function has be called when you what randomly evolute layer.
+  This function has be called when you what randomly mutate layer.
   It add random number to every weight in range(-rate, rate).
+  for random number use Normal distribution
 
   @param object self
   @param rate float - range of random number
   @return none
   '''
-  def __evolute__(self, rate = 0.5):
-      self.weights = self.weights + np.random.uniform(-rate, rate, self.shape)
-
+  def __mutate__(self, rate = 0.5):
+      self.weights = self.weights + np.random.randn(*self.shape) * 0.20 * rate

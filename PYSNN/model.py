@@ -1,12 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  model.py
-#  
-#  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>
-#  
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
 #  
@@ -23,7 +14,6 @@
 #
 
 import copy, multiprocessing, pickle
-from itertools import product
 from .loss.basic import mse as defaultloss
 
 class model:
@@ -285,19 +275,33 @@ class model:
           # mutation
           if i != 0:
             replications[i].mutate(rate)
+        
         # test every replication how is it best
-        loss = []
-        p = multiprocessing.Pool(8)
+        for j in range(replication):
+          # clear Reccurent base memery
+          replications[j].clrmem()
+          # if inputs is not definite use loss function to get loss
+          if inputs is None:
+            loss[j] = lossfunc(replications[j])
+          else:
+            for i in range(len(inputs)):
+              if offset <= i:
+                # calc error
+                loss[j] += lossfunc.__clac1V__(
+                  replications[j].predict(inputs[i]),
+                  targets[i]
+                )
+              else:
+                 # do only forward no calc error
+                 replications[j].predict(inputs[i])
 
-        lossCalc = instanceLoss(
-           inputs = inputs,
-           targets = targets,
-           lossfunc = lossfunc,
-           offset = offset,
-           replication = replication
-         )
-
-        loss = p.map(lossCalc.__calc__, replications)
+              if self.debug:
+                 self.printProgressBar(
+                    j * len(inputs) + (i + 1),
+                    replication * len(inputs),
+                    prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
+                    suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
+                    
 
         # select the best
         minLoss = 0
@@ -331,33 +335,3 @@ class model:
         return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
      elif type == "backPropagation":
         return self.backPropagationFit(inputs, targets, lossfunc, dynRateFunc, rate, epochs, offset)
-
-
-class instanceLoss:
-   def __init__(self, inputs, targets, lossfunc, offset = 0, replication = 1):
-      self.inputs = inputs
-      self.targets = targets
-      self.lossfunc = lossfunc
-      self.offset = offset
-      self.replication = replication
-
-   def __calc__(self, instance):
-     # clear Reccurent base memery
-     instance.clrmem()
-     # if inputs is not definite use loss function to get loss
-     if self.inputs is None:
-       loss = self.lossfunc(instance)
-     else:
-       loss = []
-       for i in range(len(self.inputs)):
-         if self.offset <= i:
-           # calc error
-           loss += self.lossfunc.__clac1V__(
-             instance.predict(self.inputs[i]),
-             self.targets[i]
-           )
-         else:
-            # do only forward no calc error
-            instance.predict(self.inputs[i])
- 
-     return loss
