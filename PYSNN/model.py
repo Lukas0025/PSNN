@@ -1,3 +1,12 @@
+#!/usr/bin/env python	
+# -*- coding: utf-8 -*-	
+#	
+#  model.py	
+#  	
+#  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>	
+#  	
+#  This program is free software; you can redistribute it and/or modify	
+#  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
 #  
@@ -301,6 +310,8 @@ class model:
                     replication * len(inputs),
                     prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
                     suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
+		    length = 20	
+                 )
                     
 
         # select the best
