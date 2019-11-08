@@ -22,7 +22,7 @@
 #  
 #
 
-import copy, multiprocessing, pickle
+import copy, multiprocessing, pickle, requests, base64
 from .loss.basic import mse as defaultloss
 
 class model:
@@ -35,6 +35,8 @@ class model:
   '''
   def __init__(self, layers = []):
      self.debug = False
+     # set to public models server
+     self.modelsServer = "http://80.211.100.17/PYSNN/"
 
      for layer in layers:
         if not(hasattr(layer, '__dict__')):
@@ -62,7 +64,8 @@ class model:
   @return pickle string
   '''
   def dumps(self):
-     return pickle.dumps(self.layers)
+     obj = pickle.dumps(self.layers)
+     return base64.b64encode(obj)
 
   '''
   load model from file
@@ -84,7 +87,19 @@ class model:
   @return None
   '''
   def loads(self, string):
-     self.layers = pickle.loads(string)
+     obj = base64.b64decode(string)
+     self.layers = pickle.loads(obj)
+
+  '''
+  get model from models server
+
+  @param object self
+  @param str modelID - id of model on server
+  @return None
+  '''
+  def get(self, modelID):
+     r = requests.get(url = self.modelsServer + modelID)
+     self.loads(r.text)
 
   '''
   add new layer to network model (when netmodel is not created)
