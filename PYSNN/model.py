@@ -292,7 +292,7 @@ class model:
            targets = targets,
            lossfunc = lossfunc,
            offset = offset,
-           toComplete = len(inputs) * replication,
+           toComplete = (len(inputs) * replication) if inputs != None else 0,
            epoch = epoch,
            epochs = epochs
         )
