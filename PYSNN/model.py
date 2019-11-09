@@ -34,7 +34,9 @@ class model:
   @return None
   '''
   def __init__(self, layers = []):
-     self.debug = False
+     self.debug = 0
+     self.poolSize = 4
+
      # set to public models server
      self.modelsServer = "http://80.211.100.17/PYSNN/"
 
@@ -164,27 +166,6 @@ class model:
         if hasattr(layer, '__mutate__'):
           layer.__mutate__(rate)
 
-  """
-  create terminal progress bar
-
-  @param int iteration - current iteration
-  @param int total - total iterations
-  @param str prefix - prefix string (default is '')
-  @param str suffix - suffix string (default is '')
-  @param int decimals - positive number of decimals in percent complete (default is 1)
-  @param int length - character length of bar (default is 100)
-  @param str fill - bar fill character (default is '█')
-  """
-  def printProgressBar (self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
-     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-     filledLength = int(length * iteration // total)
-     bar = fill * filledLength + '-' * (length - filledLength)
-     print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
-     # Print New Line on Complete
-     if iteration == total: 
-        print()
-        print()
-
   '''
   do backpropagation for one inputdata and one taget
 
@@ -234,6 +215,8 @@ class model:
       stockrate = rate
 
     for epoch in range(epochs):
+
+      counter = MPCounter(0, len(inputs))
       
       if dynRateFunc != None:
          rate = dynRateFunc(stockrate, epoch)
@@ -247,15 +230,13 @@ class model:
            # do only forward no backprop
            self.predict(inputs[i])
 
-        if self.debug:
-           self.printProgressBar(
-                                 i + 1,
-                                 len(inputs),
-                                 prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
-                                 suffix = 'Complete AVG loss: ' + str(loss / (i + 1)),
-                                 length = 20
-          )
+        if self.debug >= 2:
+            counter.increment()
+            counter.printProgressBar(prefix = 'epoch {} / {}'.format(epoch + 1, epochs))
 
+      if self.debug >= 1:
+         print("[INFO] actual epoch is {} loss is {}".format(epoch + 1, loss))
+    
     return loss
 
 
@@ -274,6 +255,7 @@ class model:
   @return float - loss of model before last learn loop
   '''
   def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
+
      if replication < 2:
         raise ValueError('min number of replications is 2')
 
@@ -299,35 +281,23 @@ class model:
           # mutation
           if i != 0:
             replications[i].mutate(rate)
-        
-        # test every replication how is it best
-        for j in range(replication):
-          # clear Reccurent base memery
-          replications[j].clrmem()
-          # if inputs is not definite use loss function to get loss
-          if inputs is None:
-            loss[j] = lossfunc(replications[j])
-          else:
-            for i in range(len(inputs)):
-              if offset <= i:
-                # calc error
-                loss[j] += lossfunc.__clac1V__(
-                  replications[j].predict(inputs[i]),
-                  targets[i]
-                )
-              else:
-                 # do only forward no calc error
-                 replications[j].predict(inputs[i])
 
-              if self.debug:
-                 self.printProgressBar(
-                    j * len(inputs) + (i + 1),
-                    replication * len(inputs),
-                    prefix = 'epoch ' + str(epoch + 1) + '/' + str(epochs),
-                    suffix = 'Complete AVG loss: ' + str(loss[0] / (i + 1)),
-		    length = 20	
-                 )
-                    
+
+        # test every replication how is it best
+        loss = []
+        p = multiprocessing.Pool(self.poolSize)
+
+        lossCalc = instanceLoss(
+           inputs = inputs,
+           targets = targets,
+           lossfunc = lossfunc,
+           offset = offset,
+           toComplete = len(inputs) * replication,
+           epoch = epoch,
+           epochs = epochs
+        )
+
+        loss = p.map(lossCalc.__calc__, replications)
 
         # select the best
         minLoss = 0
@@ -338,6 +308,9 @@ class model:
          
         # set BEST as current
         self.layers = replications[minLoss].layers
+
+        if self.debug >= 1:
+           print("[INFO] actual epoch is {} loss is {}".format(epoch + 1, loss[minLoss]))
      
      return loss[minLoss]
 
@@ -361,3 +334,123 @@ class model:
         return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
      elif type == "backPropagation":
         return self.backPropagationFit(inputs, targets, lossfunc, dynRateFunc, rate, epochs, offset)
+
+'''
+@class 
+this class is for multiprocess finished counter
+'''
+class MPCounter(object):
+   '''
+   init function
+
+   @param object self
+   @param int initval - start counter with number (default is 0)
+   @param int total - int number max for this count (when job is complete)
+   @return None
+   '''
+   def __init__(self, initval = 0, total = 1):
+      manager = multiprocessing.Manager()
+      self.val = manager.Value('i', initval)
+      self.lock = manager.Lock()
+      self.total = total
+
+   '''
+   increment counter (+1)
+
+   @param object self
+   @return None
+   '''
+   def increment(self):
+      with self.lock:
+         self.val.value += 1
+
+   '''
+   get counter value
+
+   @param object self
+   @return int value of counter
+   '''
+   def value(self):
+      with self.lock:
+         return self.val.value
+
+   '''
+   print progress bar by counter value
+
+   @param object self
+   @param str prefix - text before bar (default is '')
+   @param int length - length of progress bar
+   @param srt fill - complete fill with symbol
+   @return int value of counter
+   '''
+   def printProgressBar(self, prefix = '', length = 35, fill = '█'):
+      with self.lock:
+         percent = ("{0:.1f}").format(100 * (self.val.value / float(self.total)))
+         filledLength = int(length * self.val.value // self.total)
+         bar = fill * filledLength + '-' * (length - filledLength)
+         print('\r%s |%s| %s%%' % (prefix, bar, percent), end = '\r')
+         # Print New Line on Complete
+         if self.val.value == self.total:
+            self.val.value += 1
+            print()
+
+'''
+@class 
+this class is for multiprocess loss calculing
+'''
+class instanceLoss:
+   '''
+   init function
+
+   @param object self
+   @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+   @param array of numpy array targets - array of targets (outputs) for inputs data
+   @param object lossfunction - Instance of loss function class
+   @param int replication - number of copyes
+   @param int epoch - number of actual epoch for debug
+   @param int epochs - number of backpropagation loops with data (default is 1)
+   @param int offset - number of skiped elements for what do not do backpropagation only forward
+   @param int toComplete - total nuber of testing data (len(inputs) * num of replications)
+   @return None
+   '''
+   def __init__(self, inputs, targets, lossfunc, offset = 0, epoch = 1, epochs = 1, toComplete = 1):
+      self.counter = MPCounter(0, toComplete)
+      self.epoch = epoch
+      self.epochs = epochs
+      self.inputs = inputs
+      self.targets = targets
+      self.lossfunc = lossfunc
+      self.offset = offset
+
+   '''
+   this function calc loss of instance of network model
+
+   @param object self
+   @param object instance - instace of network model (model class)
+   @return Float loss of instance
+   '''
+   def __calc__(self, instance):
+     # clear Reccurent base memery
+     instance.clrmem()
+     # if inputs is not definite use loss function to get loss
+     if self.inputs is None:
+       loss = self.lossfunc(instance)
+     else:
+       loss = 0
+       for i in range(len(self.inputs)):
+         if self.offset <= i:
+           # calc error
+           loss += self.lossfunc.__clac1V__(
+             instance.predict(self.inputs[i]),
+             self.targets[i]
+           )
+         else:
+            # do only forward no calc error
+            instance.predict(self.inputs[i])
+
+         if instance.debug >= 2:
+            self.counter.increment()
+            self.counter.printProgressBar(prefix = 'epoch {} / {}'.format(self.epoch + 1, self.epochs))
+
+ 
+     return loss
