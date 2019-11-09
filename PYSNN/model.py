@@ -298,6 +298,8 @@ class model:
         )
 
         loss = p.map(lossCalc.__calc__, replications)
+        p.close()
+        p.join()
 
         # select the best
         minLoss = 0
