@@ -38,7 +38,7 @@ class model:
      self.poolSize = 4
 
      # set to public models server
-     self.modelsServer = "http://80.211.100.17/PYSNN/"
+     self.modelsServer = "http://pysnn.jecool.net/api.php"
 
      for layer in layers:
         if not(hasattr(layer, '__dict__')):
@@ -100,7 +100,16 @@ class model:
   @return None
   '''
   def get(self, modelID):
-     r = requests.get(url = self.modelsServer + modelID)
+     data = {
+        'a': 'getModel',
+        'name': modelID
+     }
+
+     r = requests.post(
+        url = self.modelsServer,
+        data = data
+     )
+
      self.loads(r.text)
 
   '''

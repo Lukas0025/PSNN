@@ -11,3 +11,4 @@ clean:
 	rm -rf build
 	rm -rf dist
 	rm -rf PYSNN.egg-info
+	rm bin/PYSNN
