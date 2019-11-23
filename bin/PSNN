@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-	
 #	
-#  pysnn.py
+#  PSNN.py
 #  terminal app	
 #  	
 #  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>	
@@ -23,37 +23,37 @@
 #  
 #
 
-import PYSNN
+import PSNN
 import argparse
 import json
 from getpass import getpass
 
-model = PYSNN.model()
-serverTools = PYSNN.server_tools(model)
+model = PSNN.model()
+serverTools = PSNN.server_tools(model)
 
 #add parser
-parser = argparse.ArgumentParser(description='Terminal app for PYSNN')
+parser = argparse.ArgumentParser(description='Terminal app for PSNN')
 
 #add argumets
 parser.add_argument(
     '--server',
     default=None,
     type=str,
-    help='set custom PYSNN models server (--server=http://example.com/api.php)'
+    help='set custom PSNN models server (--server=http://example.com/api.php)'
 )
 
 parser.add_argument(
     '--model',
     default=None,
     type=str,
-    help='show info about model (--model=PYSNN/test)'
+    help='show info about model (--model=PSNN/test)'
 )
 
 parser.add_argument(
     '--download',
     default=None,
     type=str,
-    help='download model (--download=PYSNN/test)'
+    help='download model (--download=PSNN/test)'
 )
 
 parser.add_argument(

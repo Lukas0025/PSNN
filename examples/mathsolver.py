@@ -4,7 +4,7 @@
 #use evolutionFit to solve math problem
 
 import numpy as np
-from PYSNN import model, layers
+from PSNN import model, layers
 
 netmodel = model([
   layers.dense(1)

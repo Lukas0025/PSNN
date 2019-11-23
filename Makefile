@@ -10,5 +10,5 @@ upload: dist
 clean:
 	rm -rf build
 	rm -rf dist
-	rm -rf PYSNN.egg-info
-	rm bin/PYSNN
+	rm -rf PSNN.egg-info
+	rm bin/PSNN

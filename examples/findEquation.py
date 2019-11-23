@@ -3,7 +3,7 @@
 
 import numpy as np
 import math
-from PYSNN import model, layers, activation
+from PSNN import model, layers, activation
 
 netmodel = model([
   layers.dense(2, activation.sigmoid()),

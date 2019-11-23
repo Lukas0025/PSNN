@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from PYSNN import model, layers, activation
+from PSNN import model, layers, activation
 
 class myloss:
   # this is calc loss normaly

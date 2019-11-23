@@ -1,7 +1,7 @@
 #!/usr/bin/env python	
 # -*- coding: utf-8 -*-	
 #	
-#  pysnn.py
+#  PSNN.py
 #  server tools	
 #  	
 #  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>	

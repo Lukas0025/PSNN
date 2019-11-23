@@ -4,7 +4,7 @@
 import numpy as np
 import glob
 from PIL import Image
-from PYSNN import model, layers, activation
+from PSNN import model, layers, activation
   
 # this get inputs arrays form images in directory
 #
@@ -24,7 +24,7 @@ def getITArray(directory, target):
   return out
 
 netmodel = model()
-netmodel.get("PYSNN/mnist")
+netmodel.get("PSNN/mnist")
 
 # load images for test
 test = np.array(getITArray("mnist/testing", None)[0])

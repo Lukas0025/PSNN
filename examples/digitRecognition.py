@@ -4,7 +4,7 @@
 import numpy as np
 import glob
 from PIL import Image
-from PYSNN import model, layers, activation
+from PSNN import model, layers, activation
   
 # this get inputs arrays form images in directory
 #
