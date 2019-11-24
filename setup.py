@@ -23,7 +23,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     scripts=[
-        'bin/PSNN',
+        'bin/psnn',
         'bin/PSNN'
     ],
     python_requires='>=3.0',
