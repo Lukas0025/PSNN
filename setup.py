@@ -9,10 +9,10 @@ copyfile("bin/psnn", "bin/PSNN")
 
 setuptools.setup(
     name="PSNN",
-    version="0.1.2",
+    version="0.1.4",
     author="Lukáš Plevač",
     author_email="lukasplevac@gmail.com",
-    description="PYthon Simple Neural Network - PSNN is python3 lib for machine learning",
+    description="Python Simple Neural Network - PSNN is python3 lib for machine learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Lukas0025/PSNN",

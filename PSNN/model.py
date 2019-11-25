@@ -38,7 +38,7 @@ class model:
      self.poolSize = 4
 
      # set to public models server
-     self.modelsServer = "http://PSNN.jecool.net/api.php"
+     self.modelsServer = "http://pysnn.jecool.net/api.php"
 
      for layer in layers:
         if not(hasattr(layer, '__dict__')):
