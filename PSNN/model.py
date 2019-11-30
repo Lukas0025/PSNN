@@ -168,12 +168,19 @@ class model:
   usually generate random between -rate and rate
 
   @param object self
+  @param float rate - rate of mutation
+  @param int layerNum (optimal) - number of layer to mutate
   @return None
   '''
-  def mutate(self, rate):
-     for layer in self.layers:
-        if hasattr(layer, '__mutate__'):
-          layer.__mutate__(rate)
+  def mutate(self, rate, layerNum = None):
+     if not(layerNum is None):
+        if hasattr(self.layers[layerNum], '__mutate__'):
+           self.layers[layerNum].__mutate__(rate)
+     else:
+        for layer in self.layers:
+           if hasattr(layer, '__mutate__'):
+             layer.__mutate__(rate)
+
 
   '''
   do backpropagation for one inputdata and one taget
@@ -261,9 +268,10 @@ class model:
   @param int replication - number of copyes (default is 20)
   @param int epochs - number of backpropagation loops with data (default is 1)
   @param int offset - number of skiped elements for what do not do backpropagation only forward 
+  @param layer - number of layer to fit (optimal) else fit all layers at same time
   @return float - loss of model before last learn loop
   '''
-  def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
+  def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0, layer=None):
 
      if replication < 2:
         raise ValueError('min number of replications is 2')
@@ -289,7 +297,7 @@ class model:
 
           # mutation
           if i != 0:
-            replications[i].mutate(rate)
+            replications[i].mutate(rate, layer)
 
 
         # test every replication how is it best
@@ -329,7 +337,7 @@ class model:
   fit model with data and targets with specific method
 
   @param object self
-  @param str type - type of fit method evolution/backPropagation (default is "evolution")
+  @param str type - type of fit method evolution/backPropagation/layerEvolution (default is "evolution")
   @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
   @param array of numpy array targets - array of targets (outputs) for inputs data
   @param object lossfunction - Instance of loss function class (default is MSE)
@@ -345,6 +353,16 @@ class model:
         return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
      elif type == "backPropagation":
         return self.backPropagationFit(inputs, targets, lossfunc, dynRateFunc, rate, epochs, offset)
+     elif type == "layerEvolution":
+        loss = 0
+        
+        for layerNum in range(len(self.layers)):
+           if self.debug >= 1:
+              print("[INFO] fit layer with number {}".format(layerNum))
+
+           loss = self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset, layerNum)
+        
+        return loss
 
 '''
 @class 
