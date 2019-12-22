@@ -27,7 +27,7 @@ make install
 
 * [examples](https://github.com/Lukas0025/PSNN/tree/master/examples)
 * [full documentation](https://psnn.readthedocs.io/en/latest/namespaces.html)
-* [short documentation](https://psnn.readthedocs.io/en/latest/classPSNN_1_1model_1_1model.html)
+* [model documentation](https://psnn.readthedocs.io/en/latest/classPSNN_1_1model_1_1model.html)
 * [wiki](https://github.com/Lukas0025/PSNN/wiki)
 
 ## Getting help
