@@ -9,11 +9,26 @@ PSNN is library what implement machine learning for python3. It very easy to ins
 The main advantage over keras is that it contains backed itself. Another big advantage is its small size, which allows the library to distribute even within your final application. 
 The library is suitable for small and large neural networks.
 
+### Install from pip
+
+```sh
+pip3 install PSNN
+```
+
+### Install from source
+
+```
+git clone https://github.com/Lukas0025/PSNN.git
+cd PSNN
+make install
+```
+
 ## Getting started
 
 * [examples](https://github.com/Lukas0025/PSNN/tree/master/examples)
 * [full documentation](https://psnn.readthedocs.io/en/latest/namespaces.html)
 * [short documentation](https://psnn.readthedocs.io/en/latest/classPSNN_1_1model_1_1model.html)
+* [wiki](https://github.com/Lukas0025/PSNN/wiki)
 
 ## Getting help
 
