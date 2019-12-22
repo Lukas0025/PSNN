@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package PSNN.layers
+## @package PSNN.layers.activation
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
