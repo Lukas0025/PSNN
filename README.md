@@ -12,7 +12,7 @@ The library is suitable for small and large neural networks.
 ## Getting started
 
 * [examples](https://github.com/Lukas0025/PSNN/tree/master/examples)
-* [wiki](https://github.com/Lukas0025/PSNN/wiki)
+* [doc](https://psnn.readthedocs.io/en/latest/)
 
 ## Getting help
 
