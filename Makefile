@@ -7,11 +7,15 @@ install: dist
 upload: test
 	twine upload dist/*
 
+doc:
+	doxygen
+
 clean:
 	rm -rf build
 	rm -rf dist
 	rm -rf PSNN.egg-info
 	rm bin/PSNN
+	rm -rf docs/html
 
 test: install
 	@echo "\n\n----------------------"

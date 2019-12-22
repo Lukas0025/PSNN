@@ -5,6 +5,8 @@
 #  @date 22.12.2019
 #  
 # model controller
+# main class is PSNN.model.model (can be called as PSNN.model)
+# another is for interal use
 
 import copy, multiprocessing, pickle, requests, base64
 from .loss.basic import mse as defaultloss
