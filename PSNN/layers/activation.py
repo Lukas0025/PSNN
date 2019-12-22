@@ -1,66 +1,55 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-#  activation.py
+## @package activation.py
+#  @author Lukáš Plevač <lukasplevac@gmail.com>
+#  @date 22.12.2019
 #  
-#  Copyright 2019 Lukáš Plevač <lukasplevac@gmail.com>
-#  
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#  
-#
+# Activation layer
 
 import numpy as np
 from ..activation import linear as defaultactivation
 
-'''
-activation layer
-
-@input ND numpy arrays
-@output ND numpy array with same shape
-
-SAMPLE:
-input-shape: (10, 10, 2)
-activation()
-output-shape(10, 10, 2) 
-'''
+## activation layer
+#
+# @input ND numpy arrays
+# @output ND numpy array with same shape
+# 
+# SAMPLE:
+# input-shape: (10, 10, 2)
+# activation()
+# output-shape(10, 10, 2) 
 class activation:
-  '''
-  @param object self
-  @param class activate
-  '''
+  ## init layer
+  # @param object self
+  # @param activate class activate
+  # @return None
   def __init__(self, activate = None):
-      if activate == None:
-        self.activate = defaultactivation()
-      else:
-        self.activate = activate
+    if activate == None:
+      self.activate = defaultactivation()
+    else:
+      self.activate = activate
 
-  '''
-  @param object self
-  @param 1D array of int inputshape
-  '''
+  ## create layer
+  # @param object self
+  # @param 1D array of int inputshape
+  # @return spahe of output from this layer
   def __create__(self, inputshape):
-      return inputshape
+    return inputshape
 
-  '''
-  @param object self
-  @param ND array of float inputs
-  '''
+  ## clac forward on layer
+  # @param object self
+  # @param inputs ND array of float inputs
+  # @return forwarded input (ND numpy array)
   def __forward__(self, inputs):
-      return self.activate.__calc__(inputs)
+    return self.activate.__calc__(inputs)
 
+  ## do backpropagation
+  # @param object self
+  # @param inputs ND array of float inputs 
+  # @param output ND array of float outputs
+  # @param fail ND array of float fail (errors) of layers
+  # @param rate float of size of correction
+  # @return fail of previous layer (numpy array)
   def __backprop__(self, inputs, output, fail, rate):
     nextfail = []
 
