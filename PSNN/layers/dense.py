@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package dense.py
+## @package PSNN.layers.dense
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -11,8 +11,8 @@ from ..activation import linear as defaultactivation
 
 ## dense layer (fully connect)
 #
-# @input ND numpy arrays
-# @output ND numpy array with shape (NUM OF NEURONS, ...all input shape numbers without the first)
+# input ND numpy arrays
+# output ND numpy array with shape (NUM OF NEURONS, ...all input shape numbers without the first)
 # 
 # SAMPLE:
 # input-shape: (10, 10, 2)
@@ -24,10 +24,10 @@ class dense:
   # how many neurons is in this layer is, what act function neurons
   # using and what bias number be used
   # 
-  # @param object self
-  # @param int neurons - number of neurons (required)
-  # @param object activate - Instance of activation function class (default is linear) 
-  # @param float bias - bias input number (default is 1)
+  # @param self object
+  # @param neurons number of neurons (required)
+  # @param activate Instance of activation function class (default is linear) 
+  # @param bias bias input number (default is 1)
   # @return None
   def __init__(self, neurons, activate = None, bias=1):
     self.neurons = neurons
@@ -42,9 +42,9 @@ class dense:
   # is being formed it create array for weights and randomize it.
   # it also defines what the output shape will be
   # 
-  # @param object self
-  # @param array inputshape - shape of input array
-  # @return array - shape of output array
+  # @param self object
+  # @param inputshape shape of input array
+  # @return shape of output array
   def __create__(self, inputshape):
     # clac weight shape for this input shape [down] [self.shape == shape of weights array]
     self.shape = inputshape[:]
@@ -64,16 +64,16 @@ class dense:
   ##
   # This function randomize weights
   # all of memory will be lost
-  # @param object self
+  # @param self object
   def randomizeWeights(self):
     self.weights = np.random.random_sample(self.shape)
 
   ## This function has be called when network model do prediction.
   # It do prediction with inputs and return predicted values
   # 
-  # @param object self
-  # @param numpy array inputs - array with input data with correct shape
-  # @return numpy array - predicted values
+  # @param self object
+  # @param inputs array with input data with correct shape
+  # @return redicted values
   def __forward__(self, inputs):
     #if input.shape != self.shape[1:]:
     #  raise ValueError('Shape for dense layer is incorrent')
@@ -96,12 +96,12 @@ class dense:
   ## This function has be called when network model do backpropagation learning.
   # It correct weights by error. It calc error of previous layer too.
   # 
-  # @param object self
-  # @param numpy array inputs - array with input data with correct shape
-  # @param numpy array output - array with output data (what layer predicted) with correct shape
-  # @param numpy array fail - array with fail (base: target - output) with correct shape
-  # @param float rate - rate value (size of correction jump)
-  # @return numpy array - error of previous layer
+  # @param self object
+  # @param inputs array with input data with correct shape
+  # @param output array with output data (what layer predicted) with correct shape
+  # @param fail array with fail (base: target - output) with correct shape
+  # @param rate rate value (size of correction jump)
+  # @return error of previous layer
   def __backprop__(self, inputs, output, fail, rate):
     nextfail = []
 
@@ -128,8 +128,8 @@ class dense:
   # It add random number to every weight in range(-rate, rate).
   # for random number use Normal distribution
   # 
-  # @param object self
-  # @param rate float - range of random number
+  # @param self object
+  # @param rate range of random number
   # @return none
   def __mutate__(self, rate = 0.5):
     self.weights = self.weights + np.random.randn(*self.shape) * 0.20 * rate

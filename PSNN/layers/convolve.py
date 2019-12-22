@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package convolve.py
+## @package PSNN.layers.convolve
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -11,8 +11,8 @@ import numpy as np
 
 ## convolve layer (convolution)
 #
-# @input 2D numpy array
-# @output 2D numpy array -> shape is np.subtract(inputs.shape, kernel.shape) + 1
+# input 2D numpy array
+# output 2D numpy array -> shape is np.subtract(inputs.shape, kernel.shape) + 1
 # 
 # SAMPLE:
 # input-shape: (10,10)
@@ -22,8 +22,8 @@ class convolve:
   
   ## This function be called when code create layer it define 
   # size of kernel
-  # @param object self
-  # @param tuple kSize - size of kernel (filter) (required)
+  # @param self object
+  # @param kSize size of kernel (filter) (required)
   # @return None
   def __init__(self, kSize):
     self.kSize = kSize
@@ -31,8 +31,8 @@ class convolve:
 
   ## do convolution on 2D array
   # @param object self
-  # @param numpy array inputs - inputs to convolve
-  # @param numpy array kernel - kernel for convolution 
+  # @param inputs inputs to convolve
+  # @param kernel kernel for convolution 
   # @return convolved numpy array
   def convolve2d(self, inputs, kernel):
     # calc the size of the array of submatracies
@@ -52,9 +52,9 @@ class convolve:
   
   ## This function has be called when network model
   # is being formed it randomize kernel too.
-  # @param object self
-  # @param array inputshape - shape of input array
-  # @return array - shape of output array
+  # @param self object
+  # @param inputshape shape of input array
+  # @return shape of output array
   def __create__(self, inputshape):
     self.shape = inputshape[:]
     
@@ -70,7 +70,8 @@ class convolve:
 
   ## This function randomize kernel
   # all of memory will be lost
-  # @param object self
+  # @param self object
+  # @return None
   def randomizeKernel(self):
     self.kernel = np.random.random_sample(self.kSize)
 
@@ -78,8 +79,8 @@ class convolve:
   # It do prediction with inputs and return predicted values
   #
   # @param object self
-  # @param numpy array inputs - array with input data with correct shape
-  # @return numpy array - predicted values
+  # @param inputs array with input data with correct shape
+  # @return predicted values
   def __forward__(self, inputs):
     return self.convolve2d(inputs, self.kernel)
 
@@ -89,23 +90,22 @@ class convolve:
   # It correct kernel by error. It calc error of previous layer too.
   #
   # @param object self
-  # @param numpy array inputs - array with input data with correct shape
-  # @param numpy array output - array with output data (what layer predicted) with correct shape
-  # @param numpy array fail - array with fail (base: target - output) with correct shape
-  # @param float rate - rate value (size of correction jump)
-  # @return numpy array - error of previous layer
+  # @param inputs array with input data with correct shape
+  # @param output array with output data (what layer predicted) with correct shape
+  # @param fail array with fail (base: target - output) with correct shape
+  # @param rate rate value (size of correction jump)
+  # @return error of previous layer
   # @todo
   def __backprop__(self, inputs, output, fail, rate):
     raise Exception('convolve layer not support backprop learning now. sorry')
 
-  '''
-  This function has be called when you what randomly evolute layer.
-  It add random number to every weight in range(-rate, rate).
-
-  @param object self
-  @param rate float - range of random number
-  @return none
-  '''
+  
+  ##This function has be called when you what randomly evolute layer.
+  #It add random number to every weight in range(-rate, rate).
+  #
+  # @param self object
+  # @param rate range of random number
+  # @return none
   def __mutate__(self, rate = 0.5):
     self.kernel = self.kernel + np.random.uniform(-rate, rate, self.kSize)
 

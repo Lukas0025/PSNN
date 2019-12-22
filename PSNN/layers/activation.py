@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package activation.py
+## @package PSNN.layers.activation
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -20,8 +20,8 @@ from ..activation import linear as defaultactivation
 # output-shape(10, 10, 2) 
 class activation:
   ## init layer
-  # @param object self
-  # @param activate class activate
+  # @param self object
+  # @param activate activate class
   # @return None
   def __init__(self, activate = None):
     if activate == None:
@@ -31,13 +31,13 @@ class activation:
 
   ## create layer
   # @param object self
-  # @param 1D array of int inputshape
+  # @param inputshape 1D array of int
   # @return spahe of output from this layer
   def __create__(self, inputshape):
     return inputshape
 
   ## clac forward on layer
-  # @param object self
+  # @param self object
   # @param inputs ND array of float inputs
   # @return forwarded input (ND numpy array)
   def __forward__(self, inputs):

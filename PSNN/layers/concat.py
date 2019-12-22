@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package concat.py
+## @package PSNN.layers.concat
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -12,8 +12,9 @@ from ..activation import linear as defaultactivation
 
 ## cancat layer - N layers in one layer
 #
-# @input ND numpy arrays
-# @output ND numpy array with shape concat of all branches
+# input ND numpy arrays
+# output ND numpy array with shape concat of all branches
+# 
 # SAMPLE:
 # input-shape: (2,)
 # concat([
@@ -28,8 +29,8 @@ from ..activation import linear as defaultactivation
 class concat:
     ## This function be called when code create layer it define branches
     #
-    # @param object self
-    # @param list of branches - list what have lists of layers
+    # @param self object
+    # @param branches list of branches - list what have lists of layers
     # @return None
     def __init__(self, branches):
         self.branches = branches
@@ -37,9 +38,9 @@ class concat:
     ## This function has be called when network model
     # is being formed it create layer in every breanch
     #
-    # @param object self
-    # @param array inputshape - shape of input array
-    # @return array - shape of output array
+    # @param self object
+    # @param inputshape shape of input array
+    # @return shape of output array
     def __create__(self, inputshape):
         self.shape = inputshape[:]
         self.outshape = []
@@ -58,9 +59,9 @@ class concat:
     ## This function has be called when network model do prediction.
     # It do prediction with inputs and return predicted values
     #
-    # @param object self
-    # @param numpy array inputs - array with input data with correct shape
-    # @return numpy array - predicted values
+    # @param self object
+    # @param inputs array with input data with correct shape
+    # @return predicted values
     def __forward__(self, inputs):
         outputs = []
 
@@ -75,11 +76,11 @@ class concat:
     
     ## This function has be called when network model do backpropagation learning.
     # It correct weights by error. It calc error of previous layer too.
-    # @param object self
-    # @param numpy array inputs - array with input data with correct shape
-    # @param numpy array output - array with output data (what layer predicted) with correct shape
-    # @param numpy array fail - array with fail (base: target - output) with correct shape
-    # @param float rate - rate value (size of correction jump)
+    # @param self object
+    # @param inputs array with input data with correct shape
+    # @param output array with output data (what layer predicted) with correct shape
+    # @param fail array with fail (base: target - output) with correct shape
+    # @param rate rate value (size of correction jump)
     # @return numpy array - error of previous layer
     def __backprop__(self, inputs, output, fail, rate):
         nextfail = []
@@ -111,8 +112,8 @@ class concat:
     ## This function has be called when you what randomly evolute layer.
     # It evolute every layer in every branch 
     # 
-    # @param object self
-    # @param rate float - range of random number
+    # @param self object
+    # @param rate range of random number
     # @return none
     def __evolute__(self, rate = 0.5):
         for branch in self.branches:

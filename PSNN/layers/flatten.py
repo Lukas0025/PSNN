@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## @package flatten.py
+## @package PSNN.layers.flatten
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -10,8 +10,8 @@ import numpy as np
 
 ## flatten layer
 # 
-# @input ND numpy arrays
-# @output ND numpy array with shape (num of elements) -> 1D
+# input ND numpy arrays
+# output ND numpy array with shape (num of elements) -> 1D
 # 
 # SAMPLE:
 # input-shape: (10, 2)
@@ -20,14 +20,13 @@ import numpy as np
 class flatten:
 
   ## 
-  # @param object self
-  # @param int size
+  # @param self object
   def __init__(self):
       pass
 
   ## 
-  # @param object self
-  # @param 1D array of int inputshape
+  # @param self object
+  # @param inputshape 1D array of int inputshape
   def __create__(self, inputshape):
       outshape = [1]
 
@@ -37,7 +36,7 @@ class flatten:
       return outshape
 
   ##
-  # @param object self
-  # @param ND array of float inputs
+  # @param self object
+  # @param inputs ND array of float inputs
   def __forward__(self, inputs):
       return inputs.flatten()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python	
 # -*- coding: utf-8 -*-	
-## @package model.py
+## @package PSNN.model
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -12,14 +12,20 @@ from .loss.basic import mse as defaultloss
 class model:
    ## create netmodel from layers array
    #
-   # @param object self
-   # @param array of object layers - array of instances of layers classes - Optional
+   # @param self object
+   # @param layers array of object layers - array of instances of layers classes - Optional
    # @return None
    def __init__(self, layers = []):
+      ## debug varaible
+      # default set to 0
+      # for debug set 1, 2, 3
       self.debug = 0
+      
+      ## Size of multiprocessing pool (number of theards)
       self.poolSize = 4
 
-      # set to public models server
+      ## model server address
+      # default set to public models server
       self.modelsServer = "http://pysnn.jecool.net/api.php"
 
       for layer in layers:
@@ -31,8 +37,8 @@ class model:
 
    ## store model to file
    #
-   # @param object self
-   # @param str file - file name
+   # @param self object
+   # @param file str file name
    # @return None
    def dump(self, file):
       filehandler = open(file, "wb")
@@ -41,7 +47,7 @@ class model:
 
    ## store model to string
    #
-   # @param object self
+   # @param self object
    # @return pickle string
    def dumps(self):
       obj = pickle.dumps(self.layers)
@@ -49,8 +55,8 @@ class model:
 
    ## load model from file
    # 
-   # @param object self
-   # @param str file - file name
+   # @param self object
+   # @param file - file name
    # @return None
    def load(self, file):
       filehandler = open(file, "rb")
@@ -59,8 +65,8 @@ class model:
 
    ## load model from string
    #
-   # @param object self
-   # @param str string - data from dumps()
+   # @param self object
+   # @param string - data from dumps()
    # @return None
    def loads(self, string):
       obj = base64.b64decode(string)
@@ -68,8 +74,8 @@ class model:
 
    ## get model from models server
    #
-   # @param object self
-   # @param str modelID - id of model on server
+   # @param self object
+   # @param modelID - id of model on server
    # @return None
    def get(self, modelID):
       data = {
@@ -87,8 +93,8 @@ class model:
   
    ## add new layer to network model (when netmodel is not created)
    #
-   # @param object self
-   # @param object layer - Instance of layer class
+   # @param self object
+   # @param layer - Instance of layer class
    # @return None
    def add(self, layer):
       if not(hasattr(layer, '__dict__')):
@@ -98,8 +104,8 @@ class model:
    ## create netmodel init weigths and another thing
    # using __create__() function in every layer
    #
-   # @param object self
-   # @param tuple inputs - shape of input e.g (10,10)
+   # @param self object
+   # @param inputs - shape of input e.g (10,10)
    # @return None
    def create(self, inputs):
       out = list(inputs)
@@ -108,8 +114,8 @@ class model:
 
    ## predict output form input data
    #
-   # @param object self
-   # @param numpy array inputs - array of inputs for network
+   # @param self object
+   # @param inputs - array of inputs for network
    # @return numpy array - prediction
    def predict(self, inputs):
       out = inputs
@@ -119,7 +125,7 @@ class model:
 
    ## clear memory based on Recurrnet architecture
    #
-   # @param object self
+   # @param self object
    # @return None
    def clrmem(self):
       for layer in self.layers:
@@ -132,9 +138,9 @@ class model:
    # Each layer can use the rate differently,
    # usually generate random between -rate and rate
    #
-   # @param object self
-   # @param float rate - rate of mutation
-   # @param int layerNum (optimal) - number of layer to mutate
+   # @param self object
+   # @param rate rate of mutation
+   # @param layerNum (optimal) number of layer to mutate
    # @return None
    def mutate(self, rate, layerNum = None):
       if not(layerNum is None):
@@ -149,12 +155,12 @@ class model:
   
    ## do backpropagation for one inputdata and one taget
    #
-   # @param object self
-   # @param numpy array inputdata - inputdata for network
-   # @param numpy array target - target (output) for inputdata
-   # @param object lossfunction - Instance of loss function class (default is MSE)
-   # @param float rate - rate value (size of correction jump)
-   # @return float - loss of model before learn
+   # @param self object
+   # @param inputdata inputdata for network
+   # @param target target (output) for inputdata
+   # @param lossfunc Instance of loss function class (default is MSE)
+   # @param rate rate value (size of correction jump)
+   # @return loss of model before learn
    def backPropagation(self, inputdata, target, lossfunc=None, rate=1):
       if lossfunc == None:
          lossfunc = defaultloss()
@@ -177,15 +183,15 @@ class model:
 
    ## do backpropagation for array of inputdata and array of tagets
    #
-   # @param object self
-   # @param array of numpy arrays inputs - array of inputs data for network
-   # @param array of numpy array targets - array of targets (outputs) for inputs data
-   # @param object lossfunction - Instance of loss function class (default is MSE)
-   # @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-   # @param float rate - rate value (size of correction jump)
-   # @param int epochs - number of backpropagation loops with data (default is 1)
-   # @param int offset - number of skiped elements for what do not do backpropagation only forward 
-   # @return float - loss of model before last learn loop
+   # @param self object
+   # @param inputs array of inputs data for network
+   # @param targets array of targets (outputs) for inputs data
+   # @param lossfunc Instance of loss function class (default is MSE)
+   # @param dynRateFunc function to definite rate dynamic for every epoch (Default is None)
+   # @param rate rate value (size of correction jump)
+   # @param epochs number of backpropagation loops with data (default is 1)
+   # @param offset number of skiped elements for what do not do backpropagation only forward 
+   # @return loss of model before last learn loop
    def backPropagationFit(self, inputs, targets, lossfunc=None, dynRateFunc=None, rate=1, epochs=1, offset=0):
     
       if dynRateFunc != None:
@@ -218,17 +224,17 @@ class model:
 
    ## do learning using evolution (create copy of network, mutate every copy and select the copy closest to the target)
    #
-   # @param object self
-   # @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
-   # @param array of numpy array targets - array of targets (outputs) for inputs data
-   # @param object lossfunction - Instance of loss function class (default is MSE)
-   # @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-   # @param float rate - rate value for mutate() function (default is 1)
-   # @param int replication - number of copyes (default is 20)
-   # @param int epochs - number of backpropagation loops with data (default is 1)
-   # @param int offset - number of skiped elements for what do not do backpropagation only forward 
-   # @param layer - number of layer to fit (optimal) else fit all layers at same time
-   # @return float - loss of model before last learn loop
+   # @param self object
+   # @param inputs array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+   # @param targets array of targets (outputs) for inputs data
+   # @param lossfunc Instance of loss function class (default is MSE)
+   # @param dynRateFunc function to definite rate dynamic for every epoch (Default is None)
+   # @param rate rate value for mutate() function (default is 1)
+   # @param replication number of copyes (default is 20)
+   # @param epochs number of backpropagation loops with data (default is 1)
+   # @param offset number of skiped elements for what do not do backpropagation only forward 
+   # @param layer number of layer to fit (optimal) else fit all layers at same time
+   # @return loss of model before last learn loop
    def evolutionFit(self, inputs=None, targets=None, rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0, layer=None):
 
       if replication < 2:
@@ -293,17 +299,17 @@ class model:
 
    ## fit model with data and targets with specific method
    #
-   # @param object self
-   # @param str type - type of fit method evolution/backPropagation/layerEvolution (default is "evolution")
-   # @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
-   # @param array of numpy array targets - array of targets (outputs) for inputs data
-   # @param object lossfunction - Instance of loss function class (default is MSE)
-   # @param function dynRateFunc - function to definite rate dynamic for every epoch (Default is None)
-   # @param float rate - rate value for  mutate() function (default is 1)
-   # @param int replication - number of copyes (default is 20)
-   # @param int epochs - number of backpropagation loops with data (default is 1)
-   # @param int offset - number of skiped elements for what do not do backpropagation only forward 
-   # @return float - loss of model before last learn loop
+   # @param self object
+   # @param type type of fit method evolution/backPropagation/layerEvolution (default is "evolution")
+   # @param inputs array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+   # @param targets array of targets (outputs) for inputs data
+   # @param lossfunc Instance of loss function class (default is MSE)
+   # @param dynRateFunc function to definite rate dynamic for every epoch (Default is None)
+   # @param rate rate value for  mutate() function (default is 1)
+   # @param replication number of copyes (default is 20)
+   # @param epochs number of backpropagation loops with data (default is 1)
+   # @param offset number of skiped elements for what do not do backpropagation only forward 
+   # @return loss of model before last learn loop
    def fit(self, inputs=None, targets=None, type="evolution", rate=1, replication=20, epochs=1, lossfunc=None, dynRateFunc=None, offset=0):
       if type == "evolution":
          return self.evolutionFit(inputs, targets, rate, replication, epochs, lossfunc, dynRateFunc, offset)
@@ -321,15 +327,15 @@ class model:
         
       return loss
 
-## @class 
+##
 # this class is for multiprocess finished counter
 class MPCounter(object):
    
    ## init function
    #
-   # @param object self
-   # @param int initval - start counter with number (default is 0)
-   # @param int total - int number max for this count (when job is complete)
+   # @param self object
+   # @param initval start counter with number (default is 0)
+   # @param total int number max for this count (when job is complete)
    # @return None
    def __init__(self, initval = 0, total = 1):
       manager = multiprocessing.Manager()
@@ -339,7 +345,7 @@ class MPCounter(object):
 
    ## increment counter (+1)
    #
-   # @param object self
+   # @param self object
    # @return None
    def increment(self):
       with self.lock:
@@ -347,7 +353,7 @@ class MPCounter(object):
 
    ## get counter value
    #
-   # @param object self
+   # @param self object
    # @return int value of counter
    def value(self):
       with self.lock:
@@ -355,10 +361,10 @@ class MPCounter(object):
 
    ## print progress bar by counter value
    #
-   # @param object self
-   # @param str prefix - text before bar (default is '')
-   # @param int length - length of progress bar
-   # @param str fill - complete fill with symbol
+   # @param self object
+   # @param prefix text before bar (default is '')
+   # @param length length of progress bar
+   # @param fill complete fill with symbol
    # @return int value of counter
    def printProgressBar(self, prefix = '', length = 35, fill = '█'):
       with self.lock:
@@ -371,20 +377,20 @@ class MPCounter(object):
             self.val.value += 1
             print()
 
-## @class 
+## 
 # this class is for multiprocess loss calculing
 class instanceLoss:
    ## init function
    #
-   # @param object self
-   # @param array of numpy arrays inputs - array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
-   # @param array of numpy array targets - array of targets (outputs) for inputs data
-   # @param object lossfunction - Instance of loss function class
-   # @param int replication - number of copyes
-   # @param int epoch - number of actual epoch for debug
-   # @param int epochs - number of backpropagation loops with data (default is 1)
-   # @param int offset - number of skiped elements for what do not do backpropagation only forward
-   # @param int toComplete - total nuber of testing data (len(inputs) * num of replications)
+   # @param self object
+   # @param inputs array of inputs data for network (if is None lossfunc will be call as lossfunc(replication))
+   # @param targets array of targets (outputs) for inputs data
+   # @param lossfunc Instance of loss function class
+   # @param replication number of copyes
+   # @param epoch number of actual epoch for debug
+   # @param epochs number of backpropagation loops with data (default is 1)
+   # @param offset number of skiped elements for what do not do backpropagation only forward
+   # @param toComplete total nuber of testing data (len(inputs) * num of replications)
    # @return None
    def __init__(self, inputs, targets, lossfunc, offset = 0, epoch = 1, epochs = 1, toComplete = 1):
       self.counter = MPCounter(0, toComplete)
@@ -397,8 +403,8 @@ class instanceLoss:
 
    ## this function calc loss of instance of network model
    #
-   # @param object self
-   # @param object instance - instace of network model (model class)
+   # @param self object
+   # @param instance instace of network model (model class)
    # @return Float loss of instance
    def __calc__(self, instance):
      # clear Reccurent base memery

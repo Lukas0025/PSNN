@@ -1,6 +1,6 @@
 #!/usr/bin/env python3	
 # -*- coding: utf-8 -*-	
-## @package server_tools.py
+## @package PSNN.server_tools
 #  @author Lukáš Plevač <lukasplevac@gmail.com>
 #  @date 22.12.2019
 #  
@@ -16,12 +16,12 @@ class server_tools:
     ## upload model to models server
     # 
     # @param object self
-    # @param str user - username
-    # @param str password - password for username
-    # @param object model - model what we want upload
-    # @param str name - name of model
-    # @param str description - description of model
-    # @param float loss - loss of model
+    # @param user - username
+    # @param password - password for username
+    # @param model - model what we want upload
+    # @param name - name of model
+    # @param description - description of model
+    # @param loss - loss of model
     # @return json obj
     def upload(self, user, password, model, name, description, loss):
     
@@ -47,8 +47,8 @@ class server_tools:
 
     ## get info about model
     #
-    # @param object self
-    # @param str name - full name of model
+    # @param self
+    # @param name - full name of model
     # @return json obj
     def getModelInfo(self, name):
         data = {
@@ -65,8 +65,8 @@ class server_tools:
 
     ## register user
     # 
-    # @param object self
-    # @param str name - full name of model
+    # @param self
+    # @param name - full name of model
     # @return json obj
     def register(self, name, password):
         data = {
@@ -84,8 +84,8 @@ class server_tools:
 
     ## get all models with name like
     # 
-    # @param object self
-    # @param str name - full name of model
+    # @param self
+    # @param name - full name of model
     # @return json obj
     def findModel(self, name):
         data = {
