@@ -12,8 +12,8 @@ The library is suitable for small and large neural networks.
 ## Getting started
 
 * [examples](https://github.com/Lukas0025/PSNN/tree/master/examples)
-* [documentation](https://psnn.readthedocs.io/en/latest/)
-* [main doc](https://psnn.readthedocs.io/en/latest/classPSNN_1_1model_1_1model.html)
+* [full documentation](https://psnn.readthedocs.io/en/latest/namespaces.html)
+* [short documentation](https://psnn.readthedocs.io/en/latest/classPSNN_1_1model_1_1model.html)
 
 ## Getting help
 
