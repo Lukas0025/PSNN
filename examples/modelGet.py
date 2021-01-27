@@ -24,6 +24,7 @@ def getITArray(directory, target):
   return out
 
 netmodel = model()
+netmodel.modelsServer = "http://mymodels_server.example/api.php"
 netmodel.get("PSNN/mnist")
 
 # load images for test
