@@ -24,6 +24,7 @@ def getITArray(directory, target):
   return out
 
 netmodel = model()
+# running https://github.com/Lukas0025/PSNN_models_server
 netmodel.modelsServer = "http://mymodels_server.example/api.php"
 netmodel.get("PSNN/mnist")
 
